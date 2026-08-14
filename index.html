@@ -133,6 +133,7 @@ ul{list-style:none;margin:0;padding:0}
 .want .nm{flex:1;font-weight:600;word-break:break-word}
 .want .pr{font-family:var(--n);font-weight:700;font-size:18px}
 .eq{font-size:12px;color:var(--muted);margin-top:5px}
+.musing{font-size:13px;color:var(--muted);font-style:italic;margin-top:9px;line-height:1.6;border-left:2px solid var(--edge);padding-left:9px}
 .count{display:inline-flex;gap:6px;background:var(--gold-bg);color:var(--gold-tx);font-size:13px;padding:5px 11px;border-radius:11px;margin-top:11px}
 .count.ready{background:var(--mint-bg);color:#1B5B4E}
 .two{display:flex;gap:9px;margin-top:12px}
@@ -268,10 +269,19 @@ nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding
       <div class="card">
         <div class="entry"><input type="text" id="wantIn" placeholder="想买的东西"><input type="number" id="wantAmt" placeholder="价格" inputmode="decimal" style="max-width:110px"></div>
         <div class="chips" id="days"></div>
+        <textarea id="wantNote" placeholder="碎碎念（为什么想要，纠结什么，随便写…）" style="min-height:56px;margin-top:10px"></textarea>
         <button class="fullbtn" id="wantAdd">放进冷静期</button>
       </div>
       <p class="sec">冷静中</p>
       <div id="wantList"></div>
+      <p class="sec">一定要买 · 还没买</p>
+      <div class="note mint"><b>💡 这些不用等</b>已经想清楚了，就不用走冷静期，买了记得回来点「买了」。</div>
+      <div class="card">
+        <div class="entry"><input type="text" id="needIn" placeholder="确定要买的东西"><input type="number" id="needAmt" placeholder="价格（可不填）" inputmode="decimal" style="max-width:130px"></div>
+        <textarea id="needNote" placeholder="碎碎念（急用 / 缺货 / 等发工资…）" style="min-height:56px"></textarea>
+        <button class="fullbtn" id="needAdd" style="background:var(--mint-line)">加进清单</button>
+      </div>
+      <div class="card"><div id="needList"></div></div>
       <p class="sec">忍住了的</p>
       <div class="card"><div id="passList"></div></div>
     </div>
@@ -507,7 +517,7 @@ function save(){
 }
 function load(){var r=null;try{r=localStorage.getItem('xbz3')||localStorage.getItem('xbz2')||localStorage.getItem('xbz');}catch(e){r=mem.x||null;}try{return r?JSON.parse(r):null;}catch(e){return null;}}
 var D=load()||{};
-['todos','buys','wants','cleans','cares','classes','pays','ideas','joys','stocks','trades','trips','portShots'].forEach(function(k){if(!Array.isArray(D[k]))D[k]=[];});
+['todos','buys','wants','needs','cleans','cares','classes','pays','ideas','joys','stocks','trades','trips','portShots'].forEach(function(k){if(!Array.isArray(D[k]))D[k]=[];});
 if(D.upCol!=='red')D.upCol=D.upCol||'green';
 if(typeof D.capOut!=='number')D.capOut=3000;
 if(!Array.isArray(D.kids))D.kids=['哥哥','妹妹'];
@@ -571,7 +581,7 @@ document.querySelectorAll('.tab').forEach(function(t){
     document.querySelectorAll('.page').forEach(function(x){x.classList.remove('on');});
     t.classList.add('on');$('p'+t.dataset.i).classList.add('on');
     document.querySelector('main').scrollTop=0;
-    if(t.dataset.i==='1')drawWants();
+    if(t.dataset.i==='1'){drawWants();drawNeeds();}
     if(t.dataset.i==='5')drawCheer();
   };
 });
@@ -626,6 +636,21 @@ function useTag(u){
     :'<button class="tag use unset" data-act="use">用了没？</button>';
 }
 var buyFilter='all';
+var UNUSED_LINES=[
+ '你买了这些美丽的东西，还没有穿过、用过。',
+ '心动的时候都买下了，后来就忘了它们的存在。',
+ '这些东西值得被穿上身、用起来，不是只值得被买下。',
+ '钱已经花出去了，东西还静静躺在那儿。',
+ '买的时候一定很喜欢，现在还喜欢吗？',
+ '它们在等一个被想起来的日子。'
+];
+var _lastUnusedLine='', _lastUnusedCount=-1;
+function unusedLine(n){
+  if(n===_lastUnusedCount&&_lastUnusedLine)return _lastUnusedLine;
+  var pool=UNUSED_LINES,p;
+  do{p=pool[Math.floor(Math.random()*pool.length)];}while(pool.length>1&&p===_lastUnusedLine);
+  _lastUnusedLine=p;_lastUnusedCount=n;return p;
+}
 function drawBuys(){
   var y=D.buys.filter(function(b){return isYTD(b.date);});
   var tot=sum(y), tin=sum(y.filter(function(b){return b.plan==='in';})), tout=tot-tin;
@@ -651,7 +676,7 @@ function drawBuys(){
   $('buyNote').innerHTML=n;
 
   var unused=D.buys.filter(function(b){return b.used==='no';});
-  $('unusedNote').innerHTML=unused.length?('<div class="note rose"><b>'+unused.length+' 件标了「没用」，共 $'+money(sum(unused))+'</b>不用现在处理，下次想买东西前，可以先来这翻一翻。</div>'):'';
+  $('unusedNote').innerHTML=unused.length?('<div class="note rose"><b>'+unusedLine(unused.length)+'</b>'+unused.length+' 件 · 共 $'+money(sum(unused))+'，下次想买东西前，可以先来这翻一翻。</div>'):'';
 
   var counts={all:D.buys.length,yes:D.buys.filter(function(b){return b.used==='yes';}).length,no:unused.length,unset:D.buys.filter(function(b){return !b.used;}).length};
   var FILT=[['all','全部'],['yes','已用'],['no','没用'],['unset','待定']];
@@ -706,11 +731,11 @@ $('days').onclick=function(e){
   e.target.classList.add('on');coolDays=+e.target.dataset.d;
 };
 $('wantAdd').onclick=function(){
-  var nm=$('wantIn').value.trim(), a=parseFloat($('wantAmt').value);
+  var nm=$('wantIn').value.trim(), a=parseFloat($('wantAmt').value), nt=$('wantNote').value.trim();
   if(!nm){toast('写下想买的东西');return;}
   if(isNaN(a)||a<=0){toast('填个价格，钱要看得见才有感觉');return;}
-  D.wants.unshift({id:Date.now(),name:nm,amt:a,days:coolDays,at:Date.now(),state:null});
-  $('wantIn').value='';$('wantAmt').value='';save();drawWants();
+  D.wants.unshift({id:Date.now(),name:nm,amt:a,days:coolDays,at:Date.now(),state:null,note:nt});
+  $('wantIn').value='';$('wantAmt').value='';$('wantNote').value='';save();drawWants();
   toast(coolDays===1?'放进去了，24 小时后再决定':'放进去了，'+coolDays+' 天后再决定');
 };
 function left(w){return w.at+w.days*86400000-Date.now();}
@@ -723,6 +748,7 @@ function drawWants(){
   $('wantList').innerHTML=open.length?open.map(function(w){
     var ms=left(w),ok=ms<=0;
     return '<div class="want'+(ok?' ready':'')+'" data-id="'+w.id+'"><div class="top"><span class="nm">'+esc(w.name)+'</span><span class="pr">$'+money(w.amt)+'</span></div><div class="eq">'+eq(w.amt)+'</div>'
+      +(w.note?'<div class="musing">"'+esc(w.note)+'"</div>':'')
       +'<div class="count'+(ok?' ready':'')+'">'+(ok?'✅ 冷静期到了，现在还想要吗？':'⏳ '+fmtLeft(ms))+'</div>'
       +(ok?'<div class="two"><button class="pass">算了，不买</button><button class="buy">还是想要</button></div>'
           :'<div class="two"><button class="gcal" style="flex:1;padding:11px">📅 到期提醒</button><button class="buy" style="background:var(--soft)">删掉</button></div>')+'</div>';
@@ -763,6 +789,32 @@ $('passList').onclick=function(e){
   D.wants=D.wants.filter(function(x){return x.id!=r.dataset.id;});save();drawWants();
 };
 setInterval(function(){if($('p1').classList.contains('on')&&$('s11').classList.contains('on'))drawWants();},60000);
+
+/* ---------- 一定要买（不用等） ---------- */
+$('needAdd').onclick=function(){
+  var nm=$('needIn').value.trim(), a=parseFloat($('needAmt').value), nt=$('needNote').value.trim();
+  if(!nm){toast('写下要买的东西');return;}
+  D.needs.unshift({id:Date.now(),name:nm,amt:isNaN(a)?0:a,note:nt});
+  $('needIn').value='';$('needAmt').value='';$('needNote').value='';save();drawNeeds();toast('加进去了');
+};
+function drawNeeds(){
+  $('needList').innerHTML=D.needs.length?D.needs.map(function(n){
+    return '<div class="row" data-id="'+n.id+'"><div class="r1"><span class="nm">'+esc(n.name)+'</span>'+(n.amt>0?'<span class="val">$'+money(n.amt)+'</span>':'')+'</div>'
+      +(n.note?'<div class="musing">"'+esc(n.note)+'"</div>':'')
+      +'<div class="r2"><span class="act"><button class="pay">买了</button><button class="del" style="font-size:18px">×</button></span></div></div>';
+  }).join(''):'<div class="empty">清单是空的。<br>已经想清楚要买的，放这里就不用等。</div>';
+}
+$('needList').onclick=function(e){
+  var r=e.target.closest('.row');if(!r)return;
+  var n=D.needs.filter(function(x){return x.id==r.dataset.id;})[0];if(!n)return;
+  if(e.target.classList.contains('pay')){
+    D.buys.unshift({id:Date.now(),name:n.name,amt:n.amt||0,date:todayISO(),plan:'in',owed:0,used:''});
+    D.needs=D.needs.filter(function(x){return x.id!=n.id;});
+    save();drawNeeds();drawBuys();toast('买了，记到今年清单了。');
+  }else if(e.target.classList.contains('del')){
+    D.needs=D.needs.filter(function(x){return x.id!=n.id;});save();drawNeeds();
+  }
+};
 
 /* ---------- 保洁 ---------- */
 $('cAdd').onclick=function(){
@@ -1344,7 +1396,7 @@ $('lb').onclick=function(){$('lb').classList.remove('on');$('lbImg').removeAttri
 
 /* ---------- 一键备份 ---------- */
 function applyData(d){
-  ['todos','buys','wants','cleans','cares','classes','pays','ideas','joys','stocks','trades','trips','portShots'].forEach(function(k){if(!Array.isArray(d[k]))d[k]=[];});
+  ['todos','buys','wants','needs','cleans','cares','classes','pays','ideas','joys','stocks','trades','trips','portShots'].forEach(function(k){if(!Array.isArray(d[k]))d[k]=[];});
   if(typeof d.capOut!=='number')d.capOut=3000;
   if(!Array.isArray(d.kids))d.kids=['哥哥','妹妹'];
   if(!d.ref)d.ref={name:'个月课后班',amt:480};
@@ -1434,7 +1486,7 @@ $('loadBtn').onclick=function(){
   }catch(e){toast('这段文字不对，检查一下');}
 };
 
-function drawAll(){drawTodos();drawBuys();drawWants();drawCleans();drawCares();drawKid();drawStocks();drawTrips();drawIdeas();drawCheer();drawBkNote();}
+function drawAll(){drawTodos();drawBuys();drawWants();drawNeeds();drawCleans();drawCares();drawKid();drawStocks();drawTrips();drawIdeas();drawCheer();drawBkNote();}
 drawKidSeg();drawAll();cheerUp();
 </script>
 </body>
