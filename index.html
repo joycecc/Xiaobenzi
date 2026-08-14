@@ -284,19 +284,19 @@ nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding
       <div class="num" id="clYear">$0</div>
       <div class="cap" id="clCap">还没有记录</div>
     </div>
-    <p class="sec">待处理</p>
-    <div id="clPending"></div>
-    <div class="card">
-      <p class="h">改约 / 约下一次</p>
-      <div class="entry"><input type="date" id="clNext"><input type="time" id="clNextT" style="max-width:120px"><button class="add" id="clNextSave" aria-label="保存">✓</button></div>
-      <div class="entry"><button class="fullbtn" id="clCal" style="background:var(--chip);color:var(--teal);margin-top:2px">📅 加到 Google 日历</button></div>
-    </div>
     <div class="card">
       <div class="entry"><input type="date" id="cDate"><input type="number" id="cAmt" placeholder="费用" inputmode="decimal"></div>
       <div class="entry"><input type="text" id="cNote" placeholder="阿姨 / 公司 · 备注"><button class="add" id="cAdd" aria-label="记录">+</button></div>
     </div>
     <p class="sec">上门记录</p>
     <div class="card"><div id="clList"></div></div>
+    <p class="sec">预约</p>
+    <div id="clPending"></div>
+    <div class="card">
+      <p class="h">改约 / 约下一次</p>
+      <div class="entry"><input type="date" id="clNext"><input type="time" id="clNextT" style="max-width:120px"><button class="add" id="clNextSave" aria-label="保存">✓</button></div>
+      <div class="entry"><button class="fullbtn" id="clCal" style="background:var(--chip);color:var(--teal);margin-top:2px">📅 加到 Google 日历</button></div>
+    </div>
   </section>
 
   <!-- 3 保养 -->
@@ -311,18 +311,19 @@ nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding
       <div id="caGaps"></div>
     </div>
     <div class="card">
-      <p class="h">下次预约</p>
-      <div class="entry"><input type="text" id="nxName" placeholder="项目（如 针灸 / Botox）"></div>
-      <div class="entry"><input type="date" id="nxDate"><input type="time" id="nxTime" style="max-width:120px"></div>
-      <button class="fullbtn" id="nxCal" style="background:var(--chip);color:var(--teal)">📅 加到 Google 日历</button>
-    </div>
-    <div class="card">
       <div class="chips" id="caTypes"></div>
       <div class="entry" style="margin-top:11px"><input type="date" id="aDate"><input type="number" id="aAmt" placeholder="费用" inputmode="decimal"></div>
       <div class="entry"><input type="text" id="aNote" placeholder="医生 / 项目 / 感受"><button class="add" id="aAdd" aria-label="记录">+</button></div>
     </div>
     <p class="sec">记录</p>
     <div class="card"><div id="caList"></div></div>
+    <p class="sec">预约</p>
+    <div class="card">
+      <p class="h">下次预约</p>
+      <div class="entry"><input type="text" id="nxName" placeholder="项目（如 针灸 / Botox）"></div>
+      <div class="entry"><input type="date" id="nxDate"><input type="time" id="nxTime" style="max-width:120px"></div>
+      <button class="fullbtn" id="nxCal" style="background:var(--chip);color:var(--teal)">📅 加到 Google 日历</button>
+    </div>
   </section>
 
   <!-- 4 娃 -->
@@ -396,7 +397,9 @@ nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding
       <div class="num" id="tripNum" style="font-size:24px;line-height:1.3">还没有计划</div>
       <div class="cap" id="tripCap"></div>
     </div>
-    <p class="sec">待处理</p>
+    <p class="sec">行程</p>
+    <div class="card"><div id="tripList"></div></div>
+    <p class="sec">预约</p>
     <div id="tripPending"></div>
     <div class="card">
       <p class="h">加一趟行程</p>
@@ -405,8 +408,6 @@ nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding
       <div class="entry"><input type="date" id="trCheckBy"><button class="add" id="trAdd" aria-label="添加">+</button></div>
       <p class="hint" style="margin:2px 0 0">出发日 / 返程日 / 查票提醒日（最后一个不填也行，填了会提醒你去看票价）</p>
     </div>
-    <p class="sec">行程</p>
-    <div class="card"><div id="tripList"></div></div>
   </section>
 
   <!-- 5 打气 -->
@@ -1249,7 +1250,7 @@ function drawStocks(){
     return '<div class="row" data-s="'+esc(s.sym)+'"><div class="r1"><span class="nm">'+esc(s.sym)+'</span><span class="val">$'+money(mv)+'</span></div>'
       +'<div class="r2"><span class="tag date">'+(+s.qty.toFixed(4))+' 股 · 成本 $'+money(s.cost)+' · 现价 $'+money(cur)+'</span>'
       +'<span class="tag '+plCls(pl)+'">'+plTxt(pl)+'（'+(pl>=0?'+':'')+pct.toFixed(1)+'%）</span>'
-      +'<span class="act"><button class="gcal go">查现价</button><button class="px">改现价</button><button class="sl">卖出</button></span></div></div>';
+      +'<span class="act"><button class="gcal go">查现价</button><button class="px">改现价</button><button class="ed">编辑</button><button class="sl">卖出</button></span></div></div>';
   }).join(''):'<div class="empty">还没有持仓。<br>上面记一笔买入就行。</div>';
 
   $('trList').innerHTML=D.trades.length?D.trades.slice(0,60).map(function(t){
@@ -1268,6 +1269,22 @@ $('posList').onclick=function(e){
   if(e.target.classList.contains('px')){
     var v=prompt(s.sym+' 现在多少钱一股？',s.cur||s.cost);
     if(v!==null){var n=parseFloat(v);if(!isNaN(n)&&n>0){s.cur=n;save();drawStocks();}else toast('填个数字');}
+  }else if(e.target.classList.contains('ed')){
+    var nq=prompt(s.sym+' 股数改成多少？（不是买卖，直接改数字）',+s.qty.toFixed(4));
+    if(nq===null)return;
+    var nqn=parseFloat(nq);
+    if(isNaN(nqn)||nqn<0){toast('数字不对');return;}
+    if(nqn===0){
+      if(confirm('股数改成 0，要把 '+s.sym+' 这条持仓删掉吗？（不影响交易记录）')){
+        D.stocks=D.stocks.filter(function(x){return x.sym!==s.sym;});save();drawStocks();
+      }
+      return;
+    }
+    var nc=prompt(s.sym+' 成本价改成多少？',s.cost);
+    if(nc===null)return;
+    var ncn=parseFloat(nc);
+    if(isNaN(ncn)||ncn<=0){toast('数字不对');return;}
+    s.qty=nqn;s.cost=ncn;save();drawStocks();toast('改好了');
   }else if(e.target.classList.contains('sl')){
     var q=prompt('卖出多少股？（持仓 '+(+s.qty.toFixed(4))+'）',s.qty);
     if(q===null)return;
