@@ -342,6 +342,7 @@ nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding
 
     <p class="sec">课表</p>
     <div class="card">
+      <div class="bar-row" style="margin:0 0 12px"><span class="lb" style="width:auto;color:var(--ink);font-weight:600" id="clsYear">今年上课 0 次</span><span class="am" id="clsAll"></span></div>
       <div class="entry"><input type="text" id="scName" placeholder="课程（如 架子鼓）"></div>
       <div class="entry"><input type="text" id="scWho" placeholder="老师 / 机构"></div>
       <div class="chips" id="scDows"></div>
@@ -349,18 +350,24 @@ nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding
       <div id="scList" style="margin-top:6px"></div>
     </div>
 
-    <p class="sec" id="kidLabel">缴费</p>
-    <div id="kdNote"></div>
+    <p class="sec">里程碑</p>
     <div class="card">
-      <div class="bar-row" style="margin:0 0 12px"><span class="lb" style="width:auto;color:var(--ink);font-weight:600" id="kdYear">今年已付 $0</span><span class="am" id="kdCap"></span></div>
-      <div class="entry"><input type="text" id="kName" placeholder="项目（如 8月课后班）"><input type="number" id="kAmt" placeholder="金额" inputmode="decimal" style="max-width:110px"></div>
-      <div class="entry"><input type="date" id="kDate"><button class="add" id="kAdd" aria-label="记录">+</button></div>
-      <div class="chips">
-        <button class="chip plan on" data-k="paid">已付</button>
-        <button class="chip" data-k="due">待付</button>
-      </div>
+      <div class="entry"><input type="text" id="msTitle" placeholder="里程碑（如 第一次会走路）"></div>
+      <div class="entry"><input type="date" id="msDate"></div>
+      <textarea id="msNote" placeholder="想记的细节…" style="min-height:60px"></textarea>
+      <div class="entry" style="margin-top:2px"><button class="chip" id="msPh">📷 加张照片</button></div>
+      <div class="prev" id="msPrev"><img id="msPrevImg" alt=""><button id="msPrevX">去掉</button></div>
+      <input type="file" id="msFile" accept="image/*" style="display:none">
+      <button class="fullbtn" id="msAdd" style="margin-top:10px">记下这一刻</button>
     </div>
-    <div class="card"><div id="kdList"></div></div>
+    <div id="msList"></div>
+
+    <p class="sec">碎碎念</p>
+    <div class="card">
+      <textarea id="dyIn" placeholder="随便写点什么…"></textarea>
+      <button class="fullbtn" id="dyAdd" style="background:var(--mint-line)">收进来</button>
+    </div>
+    <div id="dyList"></div>
   </section>
 
   <!-- 6 股票 -->
@@ -376,6 +383,8 @@ nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding
       </div>
     </div>
     <div id="stNote"></div>
+    <p class="sec">持仓</p>
+    <div class="card"><div id="posList"></div></div>
     <div class="card">
       <p class="h">批量导入（截图抄的都行）</p>
       <p class="hint" style="margin:0 0 10px">这里读不了图，是我在聊天里帮你看：把截图直接发在这次对话里（跟发照片给朋友一样），我读出代码、股数、成本价，照下面这个格式发回来，你贴进框里点导入。</p>
@@ -391,8 +400,6 @@ nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding
       <div class="entry"><input type="number" id="tPrice" placeholder="买入价" inputmode="decimal"><input type="date" id="tDate"></div>
       <button class="fullbtn" id="tBuy">记一笔买入</button>
     </div>
-    <p class="sec">持仓</p>
-    <div class="card"><div id="posList"></div></div>
     <p class="sec">交易记录</p>
     <div class="card"><div id="trList"></div></div>
   </section>
@@ -517,7 +524,7 @@ function save(){
 }
 function load(){var r=null;try{r=localStorage.getItem('xbz3')||localStorage.getItem('xbz2')||localStorage.getItem('xbz');}catch(e){r=mem.x||null;}try{return r?JSON.parse(r):null;}catch(e){return null;}}
 var D=load()||{};
-['todos','buys','wants','needs','cleans','cares','classes','pays','ideas','joys','stocks','trades','trips','portShots'].forEach(function(k){if(!Array.isArray(D[k]))D[k]=[];});
+['todos','buys','wants','needs','cleans','cares','classes','pays','ideas','joys','stocks','trades','trips','portShots','milestones','diary'].forEach(function(k){if(!Array.isArray(D[k]))D[k]=[];});
 if(D.upCol!=='red')D.upCol=D.upCol||'green';
 if(typeof D.capOut!=='number')D.capOut=3000;
 if(!Array.isArray(D.kids))D.kids=['哥哥','妹妹'];
@@ -538,7 +545,14 @@ function md(iso){var p=String(iso).split('-');return p.length===3?(+p[1])+'/'+(+
 function money(n){var s=(Math.round(n*100)/100).toFixed(2).replace(/\.00$/,'');return s.replace(/\B(?=(\d{3})+(?!\d)(\.|$))/g,',');}
 function esc(s){return String(s).replace(/[<>&]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c];});}
 function toast(m){var t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(function(){t.classList.remove('on');},2600);}
-function eq(n){if(!D.ref.amt||D.ref.amt<=0)return '';var k=n/D.ref.amt;return '≈ '+(k>=10?Math.round(k):k.toFixed(1))+' '+D.ref.name;}
+function eq(n){
+  var name,amt;
+  if(n>=20000){name='纽约中国往返（全家）';amt=20000;}
+  else if(n>=5000){name='商务舱往返（一人）';amt=5000;}
+  else if(D.ref.amt>0){name=D.ref.name;amt=D.ref.amt;}
+  else return '';
+  var k=n/amt;return '≈ '+(k>=10?Math.round(k):k.toFixed(1))+' '+name;
+}
 function sum(a,f){return a.reduce(function(x,y){return x+(f?f(y):y.amt);},0);}
 function daysAgo(iso){var d=new Date(iso+'T12:00:00');return Math.floor((Date.now()-d.getTime())/86400000);}
 
@@ -572,7 +586,7 @@ function gcal(o){
 }
 
 (function(){var d=new Date();$('hdate').textContent=(d.getMonth()+1)+'月'+d.getDate()+'日 · 周'+'日一二三四五六'[d.getDay()];})();
-['bDate','cDate','aDate','kDate'].forEach(function(i){$(i).value=todayISO();});
+['bDate','cDate','aDate'].forEach(function(i){$(i).value=todayISO();});
 
 /* ---------- nav ---------- */
 document.querySelectorAll('.tab').forEach(function(t){
@@ -694,11 +708,12 @@ function drawBuys(){
     return '<div class="row" data-id="'+b.id+'"><div class="r1">'
       +(b.img?'<img class="thumb pic" src="'+b.img+'" alt="">':'')
       +'<span class="nm">'+esc(b.name)+'</span><span class="val">$'+money(b.amt)+'</span></div>'
+      +(b.note?'<div class="musing">"'+esc(b.note)+'"</div>':'')
       +'<div class="r2"><span class="tag date">'+md(b.date)+'</span>'
       +'<span class="tag '+(b.plan==='out'?'out':'in')+'">'+(b.plan==='out'?'计划外':'计划内')+'</span>'
       +(b.owed>0?'<span class="tag owe">未付 $'+money(b.owed)+'</span>':'')
       +useTag(b.used)
-      +'<span class="act">'+(b.owed>0?'<button class="pay">已还清</button>':'')+'<button class="edt">改欠款</button><button class="del" style="font-size:18px">×</button></span></div></div>';
+      +'<span class="act">'+(b.owed>0?'<button class="pay">已还清</button>':'')+'<button class="edt">改欠款</button><button class="nt">碎碎念</button><button class="del" style="font-size:18px">×</button></span></div></div>';
   }).join(''):'<div class="empty">'+(D.buys.length?'这个筛选下还没有东西。':'还没有记录。<br>把今年已经买的补进来，看见总数才踩得住刹车。')+'</div>';
 }
 $('buyFilter').onclick=function(e){
@@ -715,6 +730,10 @@ $('buyList').onclick=function(e){
   }
   if(e.target.classList.contains('del')){D.buys=D.buys.filter(function(x){return x.id!=r.dataset.id;});save();drawBuys();}
   else if(e.target.classList.contains('pay')){b.owed=0;save();drawBuys();toast('还清了一笔，轻一点了。');}
+  else if(e.target.classList.contains('nt')){
+    var nv=prompt('写点什么（为什么买、什么感受、随便写）',b.note||'');
+    if(nv!==null){b.note=nv.trim();save();drawBuys();}
+  }
   else if(e.target.classList.contains('edt')){
     var v=prompt('现在还欠多少？（每个月还了多少，就改成剩下的数）',b.owed||0);
     if(v!==null){var n=parseFloat(v);if(!isNaN(n)&&n>=0){b.owed=Math.min(n,b.amt);save();drawBuys();toast(n<=0?'还清了':'更新了，还欠 $'+money(n));}else toast('填个数字');}
@@ -902,27 +921,33 @@ function drawCares(){
     return '<div class="bar-row"><span class="lb">'+c[0]+' '+c[1]+'</span><span style="color:var(--ink)">'+(d===0?'今天':d+' 天前')+'</span><span class="am">'+md(last.date)+'</span></div>';
   }).join('')||'<div class="empty" style="padding:12px">记一次之后，这里会显示间隔。</div>';
   $('caList').innerHTML=D.cares.length?D.cares.map(function(c){
-    return '<div class="row" data-id="'+c.id+'"><div class="r1"><span class="nm" style="font-weight:400">'+md(c.date)+'　'+esc(c.type)+(c.note?' · '+esc(c.note):'')+'</span><span class="val">'+(c.amt?'$'+money(c.amt):'')+'</span><button class="del">×</button></div></div>';
+    return '<div class="row" data-id="'+c.id+'"><div class="r1"><span class="nm" style="font-weight:400">'+md(c.date)+'　'+esc(c.type)+'</span><span class="val">'+(c.amt?'$'+money(c.amt):'')+'</span></div>'
+      +(c.note?'<div class="musing">"'+esc(c.note)+'"</div>':'')
+      +(c.effect?'<div class="musing" style="border-left-color:var(--mint-line)">效果：'+esc(c.effect)+'</div>':'')
+      +'<div class="r2"><span class="act"><button class="ev">评价效果</button><button class="del" style="font-size:18px">×</button></span></div></div>';
   }).join(''):'<div class="empty">还没有记录。</div>';
 }
 $('caList').onclick=function(e){
+  var r=e.target.closest('.row');if(!r)return;
+  var c=D.cares.filter(function(x){return x.id==r.dataset.id;})[0];if(!c)return;
+  if(e.target.classList.contains('ev')){
+    var v=prompt(c.type+'（'+md(c.date)+'）效果怎么样？',c.effect||'');
+    if(v!==null){c.effect=v.trim();save();drawCares();}
+    return;
+  }
   if(!e.target.classList.contains('del'))return;
-  var r=e.target.closest('.row');
-  D.cares=D.cares.filter(function(x){return x.id!=r.dataset.id;});save();drawCares();
+  D.cares=D.cares.filter(function(x){return x.id!=c.id;});save();drawCares();
 };
 
 /* ---------- 娃 ---------- */
-var kid=0, payState='paid';
+var kid=0;
 function drawKidSeg(){
   $('segKid').innerHTML=D.kids.map(function(k,i){return '<button class="'+(i===kid?'on':'')+'" data-k="'+i+'">'+esc(k)+'</button>';}).join('');
 }
 $('segKid').onclick=function(e){
   var b=e.target.closest('button');if(!b)return;
-  kid=+b.dataset.k;drawKidSeg();drawKid();
+  kid=+b.dataset.k;drawKidSeg();drawKid();drawMilestones();drawDiary();
 };
-document.querySelectorAll('.chip[data-k]').forEach(function(c){
-  c.onclick=function(){document.querySelectorAll('.chip[data-k]').forEach(function(x){x.classList.remove('on');});c.classList.add('on');payState=c.dataset.k;};
-});
 var DOW=['日','一','二','三','四','五','六'], BYDAY=['SU','MO','TU','WE','TH','FR','SA'], scDow=-1;
 $('scDows').innerHTML=DOW.map(function(d,i){return '<button class="chip" data-w="'+i+'">周'+d+'</button>';}).join('');
 $('scDows').onclick=function(e){
@@ -934,65 +959,98 @@ $('scDows').onclick=function(e){
 $('scAdd').onclick=function(){
   var nm=$('scName').value.trim();if(!nm){toast('填课程名');return;}
   var mins=parseInt($('scMins').value,10);if(isNaN(mins)||mins<=0)mins=60;
-  D.classes.unshift({id:Date.now(),kid:kid,name:nm,who:$('scWho').value.trim(),dow:scDow,time:$('scTime').value||'',mins:mins});
+  D.classes.unshift({id:Date.now(),kid:kid,name:nm,who:$('scWho').value.trim(),dow:scDow,time:$('scTime').value||'',mins:mins,checks:[]});
   $('scName').value='';$('scWho').value='';$('scTime').value='';$('scMins').value=60;
   scDow=-1;$('scDows').querySelectorAll('.chip').forEach(function(x){x.classList.remove('on');});
   save();drawKid();
 };
-$('kAdd').onclick=function(){
-  var nm=$('kName').value.trim(), a=parseFloat($('kAmt').value);
-  if(!nm){toast('填个项目名');return;}
-  if(isNaN(a)||a<=0){toast('填个金额');return;}
-  D.pays.unshift({id:Date.now(),kid:kid,name:nm,amt:a,date:$('kDate').value||todayISO(),paid:payState==='paid'});
-  $('kName').value='';$('kAmt').value='';$('kDate').value=todayISO();save();drawKid();
-  toast(payState==='paid'?'记好了':'记成待付了，别忘了');
-};
 function drawKid(){
-  var ps=D.pays.filter(function(p){return p.kid===kid;});
-  var y=ps.filter(function(p){return isYTD(p.date);});
-  var due=y.filter(function(p){return !p.paid;});
-  $('kidLabel').textContent=D.kids[kid]+' 缴费';
-  $('kdYear').textContent='今年已付 $'+money(sum(y.filter(function(p){return p.paid;})));
-  var allY=D.pays.filter(function(p){return isYTD(p.date);});
-  $('kdCap').textContent='两娃共 $'+money(sum(allY.filter(function(p){return p.paid;})));
-  $('kdNote').innerHTML=due.length?'<div class="note gold"><b>'+D.kids[kid]+'还有 '+due.length+' 笔待付 · $'+money(sum(due))+'</b>点一下「已付」就能划掉。</div>':'';
-
   var todayDow=new Date().getDay();
   var cs=D.classes.filter(function(c){return c.kid===kid;}).sort(function(a,b){
     var da=a.dow>=0?(a.dow-todayDow+7)%7:99, db=b.dow>=0?(b.dow-todayDow+7)%7:99;
     return da-db;
   });
+
+  var allChecks=[]; cs.forEach(function(c){(c.checks||[]).forEach(function(d){allChecks.push(d);});});
+  var yChecks=allChecks.filter(isYTD);
+  $('clsYear').textContent='今年上课 '+yChecks.length+' 次';
+  $('clsAll').textContent='一共 '+allChecks.length+' 次';
+
   $('scList').innerHTML=cs.length?cs.map(function(c){
     var when=(c.dow>=0?'周'+DOW[c.dow]:'')+(c.time?' '+c.time:'')||c.when||'';
-    var ok=c.dow>=0&&c.time, today=c.dow===todayDow;
+    var ok=c.dow>=0&&c.time, today=c.dow===todayDow, cnt=(c.checks||[]).length;
     return '<div class="row" data-id="'+c.id+'"><div class="r1"><span class="nm">'+esc(c.name)+'</span><span class="val" style="font-size:14px;font-weight:400;color:var(--muted)">'+esc(when)+'</span></div>'
       +'<div class="r2">'+(today?'<span class="tag in">今天</span>':'')+(c.who?'<span class="tag">'+esc(c.who)+'</span>':'')
-      +'<span class="act">'+(ok?'<button class="gcal">📅 每周加日历</button>':'')+'<button class="del" style="font-size:18px">×</button></span></div></div>';
+      +(cnt>0?'<button class="tag ck" style="cursor:pointer" title="点一下撤销一次">共 '+cnt+' 次</button>':'')
+      +'<span class="act">'+(ok?'<button class="gcal">📅 每周加日历</button>':'')+'<button class="go2">打卡</button><button class="del" style="font-size:18px">×</button></span></div></div>';
   }).join(''):'<div class="empty" style="padding:14px">还没有课。</div>';
-
-  $('kdList').innerHTML=ps.length?ps.map(function(p){
-    return '<div class="row" data-id="'+p.id+'"><div class="r1"><span class="nm">'+esc(p.name)+'</span><span class="val">$'+money(p.amt)+'</span></div>'
-      +'<div class="r2"><span class="tag date">'+md(p.date)+'</span>'
-      +(p.paid?'<span class="tag in">已付</span>':'<span class="tag owe">待付</span>')
-      +'<span class="act">'+(p.paid?'':'<button class="pay">已付</button>')+'<button class="del" style="font-size:18px">×</button></span></div></div>';
-  }).join(''):'<div class="empty">还没有缴费记录。</div>';
 }
 $('scList').onclick=function(e){
   var r=e.target.closest('.row');if(!r)return;
+  var c=D.classes.filter(function(x){return x.id==r.dataset.id;})[0];if(!c)return;
   if(e.target.classList.contains('del')){
     D.classes=D.classes.filter(function(x){return x.id!=r.dataset.id;});save();drawKid();return;
   }
   if(e.target.classList.contains('gcal')){
-    var c=D.classes.filter(function(x){return x.id==r.dataset.id;})[0];if(!c)return;
     gcal({title:'🎒 '+D.kids[c.kid]+' · '+c.name,date:nextDow(c.dow),time:c.time,mins:c.mins||60,
       details:(c.who?'老师/机构：'+c.who+'\n':'')+'来自「我的小本子」',rrule:'FREQ=WEEKLY;BYDAY='+BYDAY[c.dow]});
+  }else if(e.target.classList.contains('go2')){
+    if(!c.checks)c.checks=[];
+    c.checks.push(todayISO());save();drawKid();toast('打卡！共 '+c.checks.length+' 次');
+  }else if(e.target.classList.contains('ck')){
+    if(c.checks&&c.checks.length){c.checks.pop();save();drawKid();toast('撤销了一次');}
   }
 };
-$('kdList').onclick=function(e){
-  var r=e.target.closest('.row');if(!r)return;
-  var p=D.pays.filter(function(x){return x.id==r.dataset.id;})[0];if(!p)return;
-  if(e.target.classList.contains('del')){D.pays=D.pays.filter(function(x){return x.id!=r.dataset.id;});save();drawKid();}
-  else if(e.target.classList.contains('pay')){p.paid=true;save();drawKid();toast('划掉一笔');}
+
+/* ---------- 里程碑 / 碎碎念 ---------- */
+$('msDate').value=todayISO();
+var pendMs=null;
+$('msPh').onclick=function(){$('msFile').click();};
+$('msFile').onchange=function(e){shrink(e.target.files&&e.target.files[0],function(d){pendMs=d;setPrev($('msPrev'),$('msPrevImg'),d);});e.target.value='';};
+$('msPrevX').onclick=function(){pendMs=null;setPrev($('msPrev'),$('msPrevImg'),null);};
+$('msAdd').onclick=function(){
+  var t=$('msTitle').value.trim();
+  if(!t){toast('写个标题，比如"第一次叫妈妈"');return;}
+  D.milestones.unshift({id:Date.now(),kid:kid,title:t,date:$('msDate').value||todayISO(),note:$('msNote').value.trim(),img:pendMs||''});
+  $('msTitle').value='';$('msDate').value=todayISO();$('msNote').value='';
+  pendMs=null;setPrev($('msPrev'),$('msPrevImg'),null);
+  save();drawMilestones();toast('记下这一刻了');
+};
+function drawMilestones(){
+  var ms=D.milestones.filter(function(m){return m.kid===kid;});
+  $('msList').innerHTML=ms.length?ms.map(function(m){
+    return '<div class="idea" data-id="'+m.id+'" style="border-left-color:var(--gold-line)">'
+      +'<div style="display:flex;gap:10px;align-items:flex-start">'
+      +(m.img?'<img class="thumb pic" src="'+m.img+'" style="width:60px;height:60px;flex:none;cursor:pointer" alt="">':'')
+      +'<div style="flex:1;min-width:0"><b style="display:block">'+esc(m.title)+'</b>'
+      +(m.note?'<div style="margin-top:4px">'+esc(m.note)+'</div>':'')+'</div></div>'
+      +'<div class="stamp"><span>'+md(m.date)+'</span><button class="del" style="font-size:14px">删除</button></div></div>';
+  }).join(''):'<div class="empty">还没有里程碑。<br>第一次说话、第一次走路，都值得记一笔。</div>';
+}
+$('msList').onclick=function(e){
+  var c=e.target.closest('.idea');if(!c)return;
+  if(e.target.classList.contains('pic')){
+    var m=D.milestones.filter(function(x){return x.id==c.dataset.id;})[0];if(m)bigPic(m.img);return;
+  }
+  if(!e.target.classList.contains('del'))return;
+  D.milestones=D.milestones.filter(function(x){return x.id!=c.dataset.id;});save();drawMilestones();
+};
+$('dyAdd').onclick=function(){
+  var v=$('dyIn').value.trim();if(!v){toast('写点什么再收');return;}
+  var d=new Date();
+  D.diary.unshift({id:Date.now(),kid:kid,text:v,when:(d.getMonth()+1)+'月'+d.getDate()+'日'});
+  $('dyIn').value='';save();drawDiary();toast('收好了');
+};
+function drawDiary(){
+  var ds=D.diary.filter(function(x){return x.kid===kid;});
+  $('dyList').innerHTML=ds.length?ds.map(function(d){
+    return '<div class="idea" data-id="'+d.id+'">'+esc(d.text)+'<div class="stamp"><span>'+d.when+'</span><button class="del" style="font-size:14px">删除</button></div></div>';
+  }).join(''):'<div class="empty">还没有碎碎念。<br>孩子说的话、做的事，随手记一句。</div>';
+}
+$('dyList').onclick=function(e){
+  if(!e.target.classList.contains('del'))return;
+  var c=e.target.closest('.idea');
+  D.diary=D.diary.filter(function(x){return x.id!=c.dataset.id;});save();drawDiary();
 };
 
 /* ---------- 出行 ---------- */
@@ -1396,7 +1454,7 @@ $('lb').onclick=function(){$('lb').classList.remove('on');$('lbImg').removeAttri
 
 /* ---------- 一键备份 ---------- */
 function applyData(d){
-  ['todos','buys','wants','needs','cleans','cares','classes','pays','ideas','joys','stocks','trades','trips','portShots'].forEach(function(k){if(!Array.isArray(d[k]))d[k]=[];});
+  ['todos','buys','wants','needs','cleans','cares','classes','pays','ideas','joys','stocks','trades','trips','portShots','milestones','diary'].forEach(function(k){if(!Array.isArray(d[k]))d[k]=[];});
   if(typeof d.capOut!=='number')d.capOut=3000;
   if(!Array.isArray(d.kids))d.kids=['哥哥','妹妹'];
   if(!d.ref)d.ref={name:'个月课后班',amt:480};
@@ -1486,7 +1544,7 @@ $('loadBtn').onclick=function(){
   }catch(e){toast('这段文字不对，检查一下');}
 };
 
-function drawAll(){drawTodos();drawBuys();drawWants();drawNeeds();drawCleans();drawCares();drawKid();drawStocks();drawTrips();drawIdeas();drawCheer();drawBkNote();}
+function drawAll(){drawTodos();drawBuys();drawWants();drawNeeds();drawCleans();drawCares();drawKid();drawMilestones();drawDiary();drawStocks();drawTrips();drawIdeas();drawCheer();drawBkNote();}
 drawKidSeg();drawAll();cheerUp();
 </script>
 </body>
