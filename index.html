@@ -180,6 +180,10 @@ textarea:focus{outline:none;border-color:var(--teal);background:#fff}
 .prev img{width:56px;height:56px;object-fit:cover;border-radius:12px;border:1px solid var(--line)}
 .prev button{font-size:13px;color:var(--red);font-weight:600}
 .thumb{width:46px;height:46px;flex:none;object-fit:cover;border-radius:11px;border:1px solid var(--line)}
+.dcprev-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.dcprev-row .tw{position:relative}
+.dcprev-row .tw img{width:56px;height:56px;object-fit:cover;border-radius:12px;border:1px solid var(--line);display:block}
+.dcprev-row .tw button{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:var(--slate);color:#fff;font-size:12px;line-height:20px;text-align:center;padding:0}
 .lb{position:fixed;inset:0;background:var(--veil);display:none;align-items:center;justify-content:center;z-index:40;padding:20px}
 .lb.on{display:flex}
 .lb img{max-width:100%;max-height:86vh;border-radius:14px}
@@ -499,9 +503,9 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
     <div class="card">
       <div class="entry"><input type="date" id="dcDate"></div>
       <textarea id="dcNote" placeholder="断舍离了什么，为什么，什么感受…" style="min-height:70px"></textarea>
-      <div class="entry" style="margin-top:2px"><button class="chip" id="dcPh">📷 加张照片</button></div>
-      <div class="prev" id="dcPrev"><img id="dcPrevImg" alt=""><button id="dcPrevX">去掉</button></div>
-      <input type="file" id="dcFile" accept="image/*" style="display:none">
+      <div class="entry" style="margin-top:2px"><button class="chip" id="dcPh">📷 加照片（可多张）</button></div>
+      <div class="dcprev-row" id="dcPrevRow"></div>
+      <input type="file" id="dcFile" accept="image/*" multiple style="display:none">
       <button class="fullbtn" id="dcAdd" style="margin-top:10px">记下来</button>
     </div>
     <p class="sec">记录</p>
@@ -1709,24 +1713,38 @@ $('loadBtn').onclick=function(){
 
 /* ---------- 断舍离 ---------- */
 $('dcDate').value=todayISO();
-var pendDc=null;
+var pendDc=[];
 $('dcPh').onclick=function(){$('dcFile').click();};
-$('dcFile').onchange=function(e){shrink(e.target.files&&e.target.files[0],function(d){pendDc=d;setPrev($('dcPrev'),$('dcPrevImg'),d);});e.target.value='';};
-$('dcPrevX').onclick=function(){pendDc=null;setPrev($('dcPrev'),$('dcPrevImg'),null);};
+$('dcFile').onchange=function(e){
+  var files=Array.prototype.slice.call(e.target.files||[]);
+  files.forEach(function(f){shrink(f,function(d){pendDc.push(d);drawDcPrev();});});
+  e.target.value='';
+};
+function drawDcPrev(){
+  $('dcPrevRow').innerHTML=pendDc.map(function(d,i){
+    return '<span class="tw"><img src="'+d+'" alt=""><button data-i="'+i+'">×</button></span>';
+  }).join('');
+}
+$('dcPrevRow').onclick=function(e){
+  var b=e.target.closest('button');if(!b)return;
+  pendDc.splice(+b.dataset.i,1);drawDcPrev();
+};
 $('dcAdd').onclick=function(){
   var nt=$('dcNote').value.trim();
-  if(!nt&&!pendDc){toast('写点什么或者加张照片');return;}
-  D.declutter.unshift({id:Date.now(),date:$('dcDate').value||todayISO(),note:nt,img:pendDc||''});
-  $('dcNote').value='';$('dcDate').value=todayISO();pendDc=null;setPrev($('dcPrev'),$('dcPrevImg'),null);
+  if(!nt&&!pendDc.length){toast('写点什么或者加张照片');return;}
+  D.declutter.unshift({id:Date.now(),date:$('dcDate').value||todayISO(),note:nt,imgs:pendDc.slice()});
+  $('dcNote').value='';$('dcDate').value=todayISO();pendDc=[];drawDcPrev();
   save();drawDeclutter();toast('记下来了，轻松一点');
 };
+function dcImgs(d){return d.imgs&&d.imgs.length?d.imgs:(d.img?[d.img]:[]);}
 function drawDeclutter(){
   var y=D.declutter.filter(function(d){return isYTD(d.date);});
   $('dcYear').textContent=y.length;
   $('dcCap').textContent=y.length?'今年 '+y.length+' 件':'还没有记录';
   $('dcList').innerHTML=D.declutter.length?D.declutter.map(function(d){
+    var imgs=dcImgs(d), sz=imgs.length>1?30:60;
     return '<div class="idea" data-id="'+d.id+'"><div style="display:flex;gap:10px;align-items:flex-start">'
-      +(d.img?'<img class="thumb pic" src="'+d.img+'" style="width:60px;height:60px;flex:none;cursor:pointer" alt="">':'')
+      +(imgs.length?'<div style="display:flex;flex-wrap:wrap;gap:4px;flex:none;width:64px">'+imgs.map(function(im,i){return '<img class="pic" data-i="'+i+'" src="'+im+'" style="width:'+sz+'px;height:'+sz+'px;object-fit:cover;border-radius:8px;cursor:pointer" alt="">';}).join('')+'</div>':'')
       +'<div style="flex:1;min-width:0">'+(d.note?esc(d.note):'<span style="color:var(--muted)">随手记了一笔</span>')+'</div></div>'
       +'<div class="stamp"><span>'+md(d.date)+'</span><button class="del" style="font-size:14px">删除</button></div></div>';
   }).join(''):'<div class="empty">还没有记录。<br>清出去的东西、放下的执念，都可以记一笔。</div>';
@@ -1734,7 +1752,10 @@ function drawDeclutter(){
 $('dcList').onclick=function(e){
   var c=e.target.closest('.idea');if(!c)return;
   if(e.target.classList.contains('pic')){
-    var d=D.declutter.filter(function(x){return x.id==c.dataset.id;})[0];if(d)bigPic(d.img);return;
+    var d=D.declutter.filter(function(x){return x.id==c.dataset.id;})[0];if(!d)return;
+    var imgs=dcImgs(d),i=+e.target.dataset.i||0;
+    if(imgs[i])bigPic(imgs[i]);
+    return;
   }
   if(!e.target.classList.contains('del'))return;
   D.declutter=D.declutter.filter(function(x){return x.id!=c.dataset.id;});save();drawDeclutter();
