@@ -127,13 +127,13 @@ ul{list-style:none;margin:0;padding:0}
 .bar-row .am{font-family:var(--n);font-size:13px;color:var(--muted);margin-left:auto}
 
 /* 想买 */
-.want{background:var(--card);border-radius:18px;padding:15px 16px;margin-bottom:12px;box-shadow:0 1px 3px #0000000d;border-left:5px solid var(--gold-line)}
+.want{background:var(--card);border-radius:0 18px 18px 0;padding:15px 16px;margin-bottom:12px;box-shadow:0 1px 3px #0000000d;border-left:5px solid var(--gold-line)}
 .want.ready{border-left-color:var(--teal)}
 .want .top{display:flex;align-items:baseline;gap:10px}
 .want .nm{flex:1;font-weight:600;word-break:break-word}
 .want .pr{font-family:var(--n);font-weight:700;font-size:18px}
 .eq{font-size:12px;color:var(--muted);margin-top:5px}
-.musing{font-size:13px;color:var(--muted);font-style:italic;margin-top:9px;line-height:1.6;border-left:2px solid var(--edge);padding-left:9px}
+.musing{font-size:14px;color:var(--ink);margin-top:9px;line-height:1.6;background:var(--fill);border-radius:10px;padding:9px 11px}
 .count{display:inline-flex;gap:6px;background:var(--gold-bg);color:var(--gold-tx);font-size:13px;padding:5px 11px;border-radius:11px;margin-top:11px}
 .count.ready{background:var(--mint-bg);color:#1B5B4E}
 .two{display:flex;gap:9px;margin-top:12px}
@@ -141,7 +141,7 @@ ul{list-style:none;margin:0;padding:0}
 .two .pass{background:var(--teal);color:var(--ontl)}
 .two .buy{background:var(--soft);color:var(--muted)}
 
-.idea{background:var(--card);border-radius:16px;padding:14px 15px;margin-bottom:11px;white-space:pre-wrap;word-break:break-word;line-height:1.65;box-shadow:0 1px 3px #0000000d;border-left:5px solid var(--mint-line)}
+.idea{background:var(--card);border-radius:0 16px 16px 0;padding:14px 15px;margin-bottom:11px;white-space:pre-wrap;word-break:break-word;line-height:1.65;box-shadow:0 1px 3px #0000000d;border-left:5px solid var(--mint-line)}
 .stamp{font-size:11px;color:var(--muted);margin-top:10px;display:flex;justify-content:space-between;align-items:center}
 textarea{width:100%;background:var(--fill);border:1px solid transparent;border-radius:12px;resize:none;padding:12px;min-height:82px;line-height:1.6}
 textarea:focus{outline:none;border-color:var(--teal);background:#fff}
@@ -159,6 +159,18 @@ textarea:focus{outline:none;border-color:var(--teal);background:#fff}
 
 .empty{color:var(--muted);font-size:14px;padding:24px 10px;text-align:center;line-height:1.8}
 
+/* 日历 */
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;font-size:12px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:4px}
+.calmonth{margin-bottom:20px}
+.calhead{font-size:14px;font-weight:700;color:var(--slate);margin:0 2px 8px}
+.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.caldow{font-size:10px;color:var(--muted);text-align:center;padding-bottom:4px}
+.calday{aspect-ratio:1;border-radius:8px;background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:4px;font-size:11px;color:var(--ink);box-shadow:0 1px 2px #0000000a}
+.calday.empty{background:transparent;box-shadow:none}
+.calday.today{background:var(--teal);color:#fff;font-weight:700}
+.calday .dots{font-size:9px;line-height:1;margin-top:3px;letter-spacing:-1px}
+
 /* 照片 */
 .add.ph{background:var(--chip);color:var(--teal);font-size:19px;border:1px solid var(--edge)}
 .prev{margin-top:10px;display:none}
@@ -172,8 +184,8 @@ textarea:focus{outline:none;border-color:var(--teal);background:#fff}
 .lb p{position:absolute;bottom:calc(env(safe-area-inset-bottom) + 20px);color:#F4EDE2;font-size:13px;margin:0}
 
 nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
-.tab{flex:1;padding:8px 0 9px;text-align:center;color:var(--muted);font-size:9.5px}
-.tab em{display:block;font-style:normal;font-size:18px;margin-bottom:2px;filter:grayscale(1);opacity:.5}
+.tab{flex:1;padding:8px 0 9px;text-align:center;color:var(--muted);font-size:8.5px}
+.tab em{display:block;font-style:normal;font-size:16px;margin-bottom:2px;filter:grayscale(1);opacity:.5}
 .tab.on{color:var(--teal);font-weight:700}
 .tab.on em{filter:none;opacity:1}
 
@@ -344,6 +356,7 @@ nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding
     <div class="card">
       <div class="bar-row" style="margin:0 0 12px"><span class="lb" style="width:auto;color:var(--ink);font-weight:600" id="clsYear">今年上课 0 次</span><span class="am" id="clsAll"></span></div>
       <div class="entry"><input type="text" id="scName" placeholder="课程（如 架子鼓）"></div>
+      <div class="chips" id="scTypes" style="margin-bottom:9px"></div>
       <div class="entry"><input type="text" id="scWho" placeholder="老师 / 机构"></div>
       <div class="chips" id="scDows"></div>
       <div class="entry" style="margin-top:10px"><input type="time" id="scTime"><input type="number" id="scMins" placeholder="分钟" value="60" inputmode="numeric" style="max-width:90px"><button class="add" id="scAdd" aria-label="添加">+</button></div>
@@ -460,9 +473,38 @@ nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding
       <div id="ideaList"></div>
     </div>
   </section>
+
+  <!-- 8 日历 -->
+  <section class="page" id="p8">
+    <div class="legend">
+      <span>🌼 保养</span><span>🧹 保洁</span><span>🎉 里程碑</span><span>✈️ 出行</span><span>📦 断舍离</span>
+    </div>
+    <p class="hint" style="margin:0 0 16px">往下滑看未来 6 个月，点一下某天看当天有什么。</p>
+    <div id="calWrap"></div>
+  </section>
+
+  <!-- 9 断舍离 -->
+  <section class="page" id="p9">
+    <div class="card hero">
+      <p class="h">断舍离 · 今年</p>
+      <div class="num" id="dcYear">0</div>
+      <div class="cap" id="dcCap">还没有记录</div>
+    </div>
+    <div class="card">
+      <div class="entry"><input type="date" id="dcDate"></div>
+      <textarea id="dcNote" placeholder="断舍离了什么，为什么，什么感受…" style="min-height:70px"></textarea>
+      <div class="entry" style="margin-top:2px"><button class="chip" id="dcPh">📷 加张照片</button></div>
+      <div class="prev" id="dcPrev"><img id="dcPrevImg" alt=""><button id="dcPrevX">去掉</button></div>
+      <input type="file" id="dcFile" accept="image/*" style="display:none">
+      <button class="fullbtn" id="dcAdd" style="margin-top:10px">记下来</button>
+    </div>
+    <p class="sec">记录</p>
+    <div id="dcList"></div>
+  </section>
 </main>
 
 <nav>
+  <button class="tab" data-i="8"><em>📅</em>日历</button>
   <button class="tab on" data-i="0"><em>📝</em>清单</button>
   <button class="tab" data-i="1"><em>💎</em>花销</button>
   <button class="tab" data-i="6"><em>📈</em>股票</button>
@@ -471,6 +513,7 @@ nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding
   <button class="tab" data-i="4"><em>🎒</em>娃</button>
   <button class="tab" data-i="7"><em>✈️</em>出行</button>
   <button class="tab" data-i="5"><em>☀️</em>打气</button>
+  <button class="tab" data-i="9"><em>📦</em>断舍离</button>
 </nav>
 
 <div class="sheet" id="sheet">
@@ -478,6 +521,23 @@ nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding
     <h3>配色</h3>
     <div class="themes" id="themes"></div>
     <p class="hint">点一下马上换，可以慢慢试。</p>
+
+    <h3 style="margin-top:22px">主屏幕图标</h3>
+    <p class="hint">改完不会马上变——得先把手机上现在那个图标删掉，再重新「添加到主屏幕」一次，新图标才会出现。</p>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+      <img id="iconPreview" alt="" style="width:52px;height:52px;border-radius:14px;border:1px solid var(--line);flex:none">
+      <div style="flex:1;min-width:0">
+        <div class="entry" style="margin-bottom:8px"><input type="text" id="fIconEmoji" placeholder="打个 emoji，比如 📓🌸🍃"><button class="add" id="iconEmojiGo" aria-label="用这个">✓</button></div>
+        <div class="chips"><button class="chip" id="iconPhotoBtn">📷 用张照片</button><button class="chip" id="iconResetBtn">恢复默认</button></div>
+      </div>
+    </div>
+    <input type="file" id="iconPhotoFile" accept="image/*" style="display:none">
+
+    <h3 style="margin-top:22px">课程/活动图标</h3>
+    <p class="hint">给孩子的课程和活动配个图标，添加课表的时候可以选。</p>
+    <div id="ctList" style="margin-bottom:8px"></div>
+    <div class="entry"><input type="text" id="ctEmoji" placeholder="emoji" style="max-width:56px;flex:none"><input type="text" id="ctName" placeholder="类型名（如 游泳）"><button class="add" id="ctAdd" aria-label="添加">+</button></div>
+
     <h3 style="margin-top:22px">设置</h3>
     <div class="fld"><label>今年「计划外」上限（$）</label><input type="number" id="fCap" inputmode="decimal"></div>
     <div class="fld"><label>老大的名字</label><input type="text" id="fK1"></div>
@@ -524,10 +584,11 @@ function save(){
 }
 function load(){var r=null;try{r=localStorage.getItem('xbz3')||localStorage.getItem('xbz2')||localStorage.getItem('xbz');}catch(e){r=mem.x||null;}try{return r?JSON.parse(r):null;}catch(e){return null;}}
 var D=load()||{};
-['todos','buys','wants','needs','cleans','cares','classes','pays','ideas','joys','stocks','trades','trips','portShots','milestones','diary'].forEach(function(k){if(!Array.isArray(D[k]))D[k]=[];});
+['todos','buys','wants','needs','cleans','cares','classes','pays','ideas','joys','stocks','trades','trips','portShots','milestones','diary','declutter'].forEach(function(k){if(!Array.isArray(D[k]))D[k]=[];});
 if(D.upCol!=='red')D.upCol=D.upCol||'green';
 if(typeof D.capOut!=='number')D.capOut=3000;
 if(!Array.isArray(D.kids))D.kids=['哥哥','妹妹'];
+if(!Array.isArray(D.classTypes)||!D.classTypes.length)D.classTypes=[{e:'📚',n:'补习班'},{e:'🛝',n:'玩耍'},{e:'🗡️',n:'击剑'}];
 if(!D.ref)D.ref={name:'个月课后班',amt:480};
 if(typeof D.nextClean!=='string')D.nextClean='';
 /* migrate old spends */
@@ -597,6 +658,7 @@ document.querySelectorAll('.tab').forEach(function(t){
     document.querySelector('main').scrollTop=0;
     if(t.dataset.i==='1'){drawWants();drawNeeds();}
     if(t.dataset.i==='5')drawCheer();
+    if(t.dataset.i==='8')drawCalendar();
   };
 });
 function seg(id,pre){
@@ -708,7 +770,7 @@ function drawBuys(){
     return '<div class="row" data-id="'+b.id+'"><div class="r1">'
       +(b.img?'<img class="thumb pic" src="'+b.img+'" alt="">':'')
       +'<span class="nm">'+esc(b.name)+'</span><span class="val">$'+money(b.amt)+'</span></div>'
-      +(b.note?'<div class="musing">"'+esc(b.note)+'"</div>':'')
+      +(b.note?'<div class="musing">'+esc(b.note)+'</div>':'')
       +'<div class="r2"><span class="tag date">'+md(b.date)+'</span>'
       +'<span class="tag '+(b.plan==='out'?'out':'in')+'">'+(b.plan==='out'?'计划外':'计划内')+'</span>'
       +(b.owed>0?'<span class="tag owe">未付 $'+money(b.owed)+'</span>':'')
@@ -767,7 +829,7 @@ function drawWants(){
   $('wantList').innerHTML=open.length?open.map(function(w){
     var ms=left(w),ok=ms<=0;
     return '<div class="want'+(ok?' ready':'')+'" data-id="'+w.id+'"><div class="top"><span class="nm">'+esc(w.name)+'</span><span class="pr">$'+money(w.amt)+'</span></div><div class="eq">'+eq(w.amt)+'</div>'
-      +(w.note?'<div class="musing">"'+esc(w.note)+'"</div>':'')
+      +(w.note?'<div class="musing">'+esc(w.note)+'</div>':'')
       +'<div class="count'+(ok?' ready':'')+'">'+(ok?'✅ 冷静期到了，现在还想要吗？':'⏳ '+fmtLeft(ms))+'</div>'
       +(ok?'<div class="two"><button class="pass">算了，不买</button><button class="buy">还是想要</button></div>'
           :'<div class="two"><button class="gcal" style="flex:1;padding:11px">📅 到期提醒</button><button class="buy" style="background:var(--soft)">删掉</button></div>')+'</div>';
@@ -819,7 +881,7 @@ $('needAdd').onclick=function(){
 function drawNeeds(){
   $('needList').innerHTML=D.needs.length?D.needs.map(function(n){
     return '<div class="row" data-id="'+n.id+'"><div class="r1"><span class="nm">'+esc(n.name)+'</span>'+(n.amt>0?'<span class="val">$'+money(n.amt)+'</span>':'')+'</div>'
-      +(n.note?'<div class="musing">"'+esc(n.note)+'"</div>':'')
+      +(n.note?'<div class="musing">'+esc(n.note)+'</div>':'')
       +'<div class="r2"><span class="act"><button class="pay">买了</button><button class="del" style="font-size:18px">×</button></span></div></div>';
   }).join(''):'<div class="empty">清单是空的。<br>已经想清楚要买的，放这里就不用等。</div>';
 }
@@ -910,6 +972,7 @@ $('aAdd').onclick=function(){
   D.cares.unshift({id:Date.now(),type:careType,date:$('aDate').value||todayISO(),amt:Math.max(0,a),note:$('aNote').value.trim()});
   $('aAmt').value='';$('aNote').value='';$('aDate').value=todayISO();save();drawCares();toast('记好了。对自己好一点不用有负担。');
 };
+function careIcon(t){for(var i=0;i<CARE.length;i++)if(CARE[i][1]===t)return CARE[i][0];return '🩺';}
 function drawCares(){
   var y=D.cares.filter(function(c){return isYTD(c.date);});
   $('caYear').textContent='$'+money(sum(y));
@@ -921,14 +984,19 @@ function drawCares(){
     return '<div class="bar-row"><span class="lb">'+c[0]+' '+c[1]+'</span><span style="color:var(--ink)">'+(d===0?'今天':d+' 天前')+'</span><span class="am">'+md(last.date)+'</span></div>';
   }).join('')||'<div class="empty" style="padding:12px">记一次之后，这里会显示间隔。</div>';
   $('caList').innerHTML=D.cares.length?D.cares.map(function(c){
-    return '<div class="row" data-id="'+c.id+'"><div class="r1"><span class="nm" style="font-weight:400">'+md(c.date)+'　'+esc(c.type)+'</span><span class="val">'+(c.amt?'$'+money(c.amt):'')+'</span></div>'
-      +(c.note?'<div class="musing">"'+esc(c.note)+'"</div>':'')
-      +(c.effect?'<div class="musing" style="border-left-color:var(--mint-line)">效果：'+esc(c.effect)+'</div>':'')
-      +'<div class="r2"><span class="act"><button class="ev">评价效果</button><button class="del" style="font-size:18px">×</button></span></div></div>';
+    return '<div class="idea" data-id="'+c.id+'">'
+      +'<div style="display:flex;align-items:baseline;gap:9px">'
+      +'<span style="font-size:19px;flex:none">'+careIcon(c.type)+'</span>'
+      +'<b style="flex:1;min-width:0">'+esc(c.type)+'</b>'
+      +(c.amt?'<span style="font-family:var(--n);font-weight:700;flex:none">$'+money(c.amt)+'</span>':'')
+      +'</div>'
+      +(c.note?'<div class="musing">'+esc(c.note)+'</div>':'')
+      +(c.effect?'<div class="musing" style="background:var(--mint-bg);color:#1B5B4E">✓ '+esc(c.effect)+'</div>':'')
+      +'<div class="stamp"><span>'+md(c.date)+'</span><span style="display:flex;gap:14px"><button class="ev" style="color:var(--teal);font-weight:600;font-size:12px">评价效果</button><button class="del" style="font-size:14px">删除</button></span></div></div>';
   }).join(''):'<div class="empty">还没有记录。</div>';
 }
 $('caList').onclick=function(e){
-  var r=e.target.closest('.row');if(!r)return;
+  var r=e.target.closest('.idea');if(!r)return;
   var c=D.cares.filter(function(x){return x.id==r.dataset.id;})[0];if(!c)return;
   if(e.target.classList.contains('ev')){
     var v=prompt(c.type+'（'+md(c.date)+'）效果怎么样？',c.effect||'');
@@ -948,7 +1016,7 @@ $('segKid').onclick=function(e){
   var b=e.target.closest('button');if(!b)return;
   kid=+b.dataset.k;drawKidSeg();drawKid();drawMilestones();drawDiary();
 };
-var DOW=['日','一','二','三','四','五','六'], BYDAY=['SU','MO','TU','WE','TH','FR','SA'], scDow=-1;
+var DOW=['日','一','二','三','四','五','六'], BYDAY=['SU','MO','TU','WE','TH','FR','SA'], scDow=-1, clsType='';
 $('scDows').innerHTML=DOW.map(function(d,i){return '<button class="chip" data-w="'+i+'">周'+d+'</button>';}).join('');
 $('scDows').onclick=function(e){
   var b=e.target.closest('.chip');if(!b)return;
@@ -956,12 +1024,29 @@ $('scDows').onclick=function(e){
   $('scDows').querySelectorAll('.chip').forEach(function(x){x.classList.remove('on');});
   if(was){scDow=-1;}else{b.classList.add('on');scDow=+b.dataset.w;}
 };
+function classIcon(tn){
+  var t=D.classTypes.filter(function(x){return x.n===tn;})[0];
+  return t?t.e:'🎒';
+}
+function drawClassTypeChips(){
+  $('scTypes').innerHTML=D.classTypes.map(function(t){
+    return '<button class="chip'+(clsType===t.n?' on':'')+'" data-n="'+esc(t.n)+'">'+esc(t.e)+' '+esc(t.n)+'</button>';
+  }).join('');
+}
+drawClassTypeChips();
+$('scTypes').onclick=function(e){
+  var b=e.target.closest('.chip');if(!b)return;
+  var was=b.classList.contains('on');
+  $('scTypes').querySelectorAll('.chip').forEach(function(x){x.classList.remove('on');});
+  if(was){clsType='';}else{b.classList.add('on');clsType=b.dataset.n;}
+};
 $('scAdd').onclick=function(){
   var nm=$('scName').value.trim();if(!nm){toast('填课程名');return;}
   var mins=parseInt($('scMins').value,10);if(isNaN(mins)||mins<=0)mins=60;
-  D.classes.unshift({id:Date.now(),kid:kid,name:nm,who:$('scWho').value.trim(),dow:scDow,time:$('scTime').value||'',mins:mins,checks:[]});
+  D.classes.unshift({id:Date.now(),kid:kid,name:nm,who:$('scWho').value.trim(),dow:scDow,time:$('scTime').value||'',mins:mins,checks:[],type:clsType});
   $('scName').value='';$('scWho').value='';$('scTime').value='';$('scMins').value=60;
   scDow=-1;$('scDows').querySelectorAll('.chip').forEach(function(x){x.classList.remove('on');});
+  clsType='';drawClassTypeChips();
   save();drawKid();
 };
 function drawKid(){
@@ -979,7 +1064,7 @@ function drawKid(){
   $('scList').innerHTML=cs.length?cs.map(function(c){
     var when=(c.dow>=0?'周'+DOW[c.dow]:'')+(c.time?' '+c.time:'')||c.when||'';
     var ok=c.dow>=0&&c.time, today=c.dow===todayDow, cnt=(c.checks||[]).length;
-    return '<div class="row" data-id="'+c.id+'"><div class="r1"><span class="nm">'+esc(c.name)+'</span><span class="val" style="font-size:14px;font-weight:400;color:var(--muted)">'+esc(when)+'</span></div>'
+    return '<div class="row" data-id="'+c.id+'"><div class="r1"><span class="nm">'+classIcon(c.type)+' '+esc(c.name)+'</span><span class="val" style="font-size:14px;font-weight:400;color:var(--muted)">'+esc(when)+'</span></div>'
       +'<div class="r2">'+(today?'<span class="tag in">今天</span>':'')+(c.who?'<span class="tag">'+esc(c.who)+'</span>':'')
       +(cnt>0?'<button class="tag ck" style="cursor:pointer" title="点一下撤销一次">共 '+cnt+' 次</button>':'')
       +'<span class="act">'+(ok?'<button class="gcal">📅 每周加日历</button>':'')+'<button class="go2">打卡</button><button class="del" style="font-size:18px">×</button></span></div></div>';
@@ -1258,6 +1343,76 @@ var THEMES={
  lilac:{n:'淡紫灰',v:{slate:'#4A4257',cream:'#F1EFF4',card:'#FDFCFE',ink:'#332E3D',muted:'#8A8395',teal:'#6D5A8C','gold-bg':'#F7F0DE','gold-line':'#C9AA63','gold-tx':'#7E6528','mint-bg':'#E4EAE4','mint-line':'#728A75','rose-bg':'#F3E7EE','rose-line':'#DFC8D6','rose-tx':'#85496A',chip:'#EAE5F0',red:'#9A5470',line:'#E1DCE8',fill:'#F5F2F8',track:'#E5DFEC',divider:'#EEEAF2',soft:'#EFEBF4',edge:'#D8CFE2',outbg:'#F2E1EA',xmark:'#C4BCCE',veil:'#332E3DEE',ontl:'#FFFFFF'}},
  night:{n:'深色夜间',v:{slate:'#1F2124',cream:'#16181A',card:'#212427',ink:'#E8E4DE',muted:'#8E938F',teal:'#C6A97C','gold-bg':'#2E2818','gold-line':'#C6A05A','gold-tx':'#E0BE7E','mint-bg':'#1E2A22','mint-line':'#7FA286','rose-bg':'#2E2020','rose-line':'#6B4442','rose-tx':'#E0A19A',chip:'#2A2E31',red:'#D9756A',line:'#32373A',fill:'#272B2E',track:'#2E3336',divider:'#2A2E31',soft:'#2A2E31',edge:'#3A4044',outbg:'#3A2724',xmark:'#5A6165',veil:'#000000F2',ontl:'#1B1D1F'}}
 };
+/* ---------- 课程/活动图标 ---------- */
+function drawClassTypes(){
+  $('ctList').innerHTML=D.classTypes.map(function(t,i){
+    return '<div class="entry" data-i="'+i+'"><span style="width:34px;text-align:center;font-size:18px;flex:none">'+esc(t.e)+'</span><span style="flex:1;min-width:0">'+esc(t.n)+'</span><button class="del" style="font-size:14px">删除</button></div>';
+  }).join('')||'<p class="hint">还没有类型，加一个吧。</p>';
+}
+$('ctList').onclick=function(e){
+  if(!e.target.classList.contains('del'))return;
+  var row=e.target.closest('[data-i]');if(!row)return;
+  D.classTypes.splice(+row.dataset.i,1);save();drawClassTypes();drawClassTypeChips();
+};
+$('ctAdd').onclick=function(){
+  var em=$('ctEmoji').value.trim(), nm=$('ctName').value.trim();
+  if(!nm){toast('填个类型名');return;}
+  D.classTypes.push({e:em||'🎈',n:nm});
+  $('ctEmoji').value='';$('ctName').value='';
+  save();drawClassTypes();drawClassTypeChips();
+};
+
+/* ---------- 主屏幕图标 ---------- */
+var DEFAULT_ICON=document.querySelector('link[rel="apple-touch-icon"]').getAttribute('href');
+function makeEmojiIcon(emoji,bg){
+  var c=document.createElement('canvas');c.width=180;c.height=180;
+  var x=c.getContext('2d');
+  x.fillStyle=bg||'#3E4E5B';x.fillRect(0,0,180,180);
+  x.font='96px serif';x.textAlign='center';x.textBaseline='middle';
+  try{x.fillText(emoji,90,100);}catch(err){}
+  return c.toDataURL('image/png');
+}
+function fileToSquareIcon(file,cb){
+  var r=new FileReader();
+  r.onload=function(){
+    var img=new Image();
+    img.onload=function(){
+      var c=document.createElement('canvas');c.width=180;c.height=180;
+      var x=c.getContext('2d');
+      var s=Math.min(img.width,img.height),sx=(img.width-s)/2,sy=(img.height-s)/2;
+      x.drawImage(img,sx,sy,s,s,0,0,180,180);
+      try{cb(c.toDataURL('image/png'));}catch(err){toast('这张图不能当图标');}
+    };
+    img.onerror=function(){toast('这张图读不了');};
+    img.src=r.result;
+  };
+  r.onerror=function(){toast('读不了这张图');};
+  r.readAsDataURL(file);
+}
+function applyIcon(){
+  var link=document.querySelector('link[rel="apple-touch-icon"]');
+  if(!link)return;
+  var href=D.iconImg?D.iconImg:(D.iconEmoji?makeEmojiIcon(D.iconEmoji,(THEMES[D.theme||'blue']||THEMES.blue).v.slate):DEFAULT_ICON);
+  link.setAttribute('href',href);
+  var pv=$('iconPreview');if(pv)pv.src=href;
+}
+$('iconEmojiGo').onclick=function(){
+  var v=$('fIconEmoji').value.trim();
+  if(!v){toast('打个 emoji 再确定');return;}
+  D.iconEmoji=v;D.iconImg='';save();applyIcon();toast('设好了，记得删掉旧图标重新添加到主屏幕');
+};
+$('iconPhotoBtn').onclick=function(){$('iconPhotoFile').click();};
+$('iconPhotoFile').onchange=function(e){
+  var f=e.target.files&&e.target.files[0];if(!f)return;
+  fileToSquareIcon(f,function(dataUrl){
+    D.iconImg=dataUrl;D.iconEmoji='';save();applyIcon();toast('设好了，记得删掉旧图标重新添加到主屏幕');
+  });
+  e.target.value='';
+};
+$('iconResetBtn').onclick=function(){
+  D.iconEmoji='';D.iconImg='';$('fIconEmoji').value='';save();applyIcon();toast('恢复默认了，记得重新添加到主屏幕');
+};
+
 function applyTheme(k){
   var t=THEMES[k]||THEMES.cream, r=document.documentElement.style;
   for(var p in t.v)r.setProperty('--'+p,t.v[p]);
@@ -1275,9 +1430,9 @@ function drawThemes(){
 }
 $('themes').onclick=function(e){
   var b=e.target.closest('.th');if(!b)return;
-  applyTheme(b.dataset.t);save();drawThemes();drawStocks();
+  applyTheme(b.dataset.t);save();drawThemes();drawStocks();applyIcon();
 };
-applyTheme(D.theme||'blue');
+applyTheme(D.theme||'blue');applyIcon();
 
 /* ---------- 股票 ---------- */
 $('tDate').value=todayISO();
@@ -1454,7 +1609,7 @@ $('lb').onclick=function(){$('lb').classList.remove('on');$('lbImg').removeAttri
 
 /* ---------- 一键备份 ---------- */
 function applyData(d){
-  ['todos','buys','wants','needs','cleans','cares','classes','pays','ideas','joys','stocks','trades','trips','portShots','milestones','diary'].forEach(function(k){if(!Array.isArray(d[k]))d[k]=[];});
+  ['todos','buys','wants','needs','cleans','cares','classes','pays','ideas','joys','stocks','trades','trips','portShots','milestones','diary','declutter'].forEach(function(k){if(!Array.isArray(d[k]))d[k]=[];});
   if(typeof d.capOut!=='number')d.capOut=3000;
   if(!Array.isArray(d.kids))d.kids=['哥哥','妹妹'];
   if(!d.ref)d.ref={name:'个月课后班',amt:480};
@@ -1513,6 +1668,8 @@ $('upBk').onchange=function(e){
 /* ---------- 设置 / 备份 ---------- */
 function openSheet(){
   drawThemes();
+  $('fIconEmoji').value=D.iconEmoji||'';applyIcon();
+  drawClassTypes();
   $('fCap').value=D.capOut;$('fK1').value=D.kids[0];$('fK2').value=D.kids[1];
   $('fRefName').value=D.ref.name;$('fRefAmt').value=D.ref.amt;$('fJmail').value=D.jmail||'';
   $('fMyMail').value=D.mymail||'';
@@ -1544,7 +1701,85 @@ $('loadBtn').onclick=function(){
   }catch(e){toast('这段文字不对，检查一下');}
 };
 
-function drawAll(){drawTodos();drawBuys();drawWants();drawNeeds();drawCleans();drawCares();drawKid();drawMilestones();drawDiary();drawStocks();drawTrips();drawIdeas();drawCheer();drawBkNote();}
+/* ---------- 断舍离 ---------- */
+$('dcDate').value=todayISO();
+var pendDc=null;
+$('dcPh').onclick=function(){$('dcFile').click();};
+$('dcFile').onchange=function(e){shrink(e.target.files&&e.target.files[0],function(d){pendDc=d;setPrev($('dcPrev'),$('dcPrevImg'),d);});e.target.value='';};
+$('dcPrevX').onclick=function(){pendDc=null;setPrev($('dcPrev'),$('dcPrevImg'),null);};
+$('dcAdd').onclick=function(){
+  var nt=$('dcNote').value.trim();
+  if(!nt&&!pendDc){toast('写点什么或者加张照片');return;}
+  D.declutter.unshift({id:Date.now(),date:$('dcDate').value||todayISO(),note:nt,img:pendDc||''});
+  $('dcNote').value='';$('dcDate').value=todayISO();pendDc=null;setPrev($('dcPrev'),$('dcPrevImg'),null);
+  save();drawDeclutter();toast('记下来了，轻松一点');
+};
+function drawDeclutter(){
+  var y=D.declutter.filter(function(d){return isYTD(d.date);});
+  $('dcYear').textContent=y.length;
+  $('dcCap').textContent=y.length?'今年 '+y.length+' 件':'还没有记录';
+  $('dcList').innerHTML=D.declutter.length?D.declutter.map(function(d){
+    return '<div class="idea" data-id="'+d.id+'"><div style="display:flex;gap:10px;align-items:flex-start">'
+      +(d.img?'<img class="thumb pic" src="'+d.img+'" style="width:60px;height:60px;flex:none;cursor:pointer" alt="">':'')
+      +'<div style="flex:1;min-width:0">'+(d.note?esc(d.note):'<span style="color:var(--muted)">随手记了一笔</span>')+'</div></div>'
+      +'<div class="stamp"><span>'+md(d.date)+'</span><button class="del" style="font-size:14px">删除</button></div></div>';
+  }).join(''):'<div class="empty">还没有记录。<br>清出去的东西、放下的执念，都可以记一笔。</div>';
+}
+$('dcList').onclick=function(e){
+  var c=e.target.closest('.idea');if(!c)return;
+  if(e.target.classList.contains('pic')){
+    var d=D.declutter.filter(function(x){return x.id==c.dataset.id;})[0];if(d)bigPic(d.img);return;
+  }
+  if(!e.target.classList.contains('del'))return;
+  D.declutter=D.declutter.filter(function(x){return x.id!=c.dataset.id;});save();drawDeclutter();
+};
+
+/* ---------- 日历 ---------- */
+var CAL_EVENTS={};
+function calAdd(iso,em,label){
+  if(!iso)return;
+  if(!CAL_EVENTS[iso])CAL_EVENTS[iso]=[];
+  CAL_EVENTS[iso].push({em:em,label:label});
+}
+function buildCalEvents(){
+  CAL_EVENTS={};
+  D.cares.forEach(function(c){calAdd(c.date,'🌼',c.type||'保养');});
+  D.cleans.forEach(function(c){calAdd(c.date,'🧹','保洁');});
+  if(D.nextClean)calAdd(D.nextClean,'🧹','保洁预约');
+  D.milestones.forEach(function(m){calAdd(m.date,'🎉',m.title||'里程碑');});
+  D.trips.forEach(function(t){calAdd(t.depart,'✈️','出发 · '+t.dest);if(t.ret)calAdd(t.ret,'✈️','返程 · '+t.dest);});
+  D.declutter.forEach(function(d){calAdd(d.date,'📦',d.note?('断舍离 · '+d.note):'断舍离');});
+}
+function calMonthHtml(year,m0){
+  var first=new Date(year,m0,1), startDow=first.getDay();
+  var daysInMonth=new Date(year,m0+1,0).getDate();
+  var todayStr=todayISO();
+  var h='<div class="calmonth"><div class="calhead">'+year+' 年 '+(m0+1)+' 月</div><div class="calgrid">';
+  ['日','一','二','三','四','五','六'].forEach(function(d){h+='<div class="caldow">'+d+'</div>';});
+  for(var i=0;i<startDow;i++)h+='<div class="calday empty"></div>';
+  for(var d=1;d<=daysInMonth;d++){
+    var iso=year+'-'+pad(m0+1)+'-'+pad(d);
+    var evs=CAL_EVENTS[iso]||[];
+    h+='<div class="calday'+(iso===todayStr?' today':'')+'" data-d="'+iso+'">'+d
+      +(evs.length?'<div class="dots">'+evs.slice(0,3).map(function(x){return x.em;}).join('')+'</div>':'')+'</div>';
+  }
+  h+='</div></div>';
+  return h;
+}
+function drawCalendar(){
+  buildCalEvents();
+  var now=new Date(), y=now.getFullYear(), m=now.getMonth(), h='';
+  for(var i=0;i<6;i++){var yy=y+Math.floor((m+i)/12), mm=(m+i)%12; h+=calMonthHtml(yy,mm);}
+  $('calWrap').innerHTML=h;
+}
+$('calWrap').onclick=function(e){
+  var c=e.target.closest('.calday');if(!c||!c.dataset.d)return;
+  var evs=CAL_EVENTS[c.dataset.d];
+  if(!evs||!evs.length){toast(c.dataset.d+'：这天没记什么');return;}
+  toast(c.dataset.d+'　'+evs.map(function(x){return x.em+' '+x.label;}).join(' · '));
+};
+
+function drawAll(){drawTodos();drawBuys();drawWants();drawNeeds();drawCleans();drawCares();drawKid();drawMilestones();drawDiary();drawStocks();drawTrips();drawDeclutter();drawIdeas();drawCheer();drawBkNote();drawCalendar();}
 drawKidSeg();drawAll();cheerUp();
 </script>
 </body>
