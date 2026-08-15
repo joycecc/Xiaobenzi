@@ -476,10 +476,14 @@ nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding
 
   <!-- 8 日历 -->
   <section class="page" id="p8">
-    <div class="legend">
-      <span>🌼 保养</span><span>🧹 保洁</span><span>🎉 里程碑</span><span>✈️ 出行</span><span>📦 断舍离</span>
+    <div class="chips" id="calLegend">
+      <button class="chip" data-cat="care">🌼 保养</button>
+      <button class="chip" data-cat="clean">🧹 保洁</button>
+      <button class="chip" data-cat="kid">🎒 娃</button>
+      <button class="chip" data-cat="trip">✈️ 出行</button>
+      <button class="chip" data-cat="declutter">📦 断舍离</button>
     </div>
-    <p class="hint" style="margin:0 0 16px">往下滑看未来 6 个月，点一下某天看当天有什么。</p>
+    <p class="hint" style="margin:10px 0 16px">点一个类型只看那类，再点一下恢复全部看。往下滑看未来 6 个月，点某天看当天详情。</p>
     <div id="calWrap"></div>
   </section>
 
@@ -1735,21 +1739,29 @@ $('dcList').onclick=function(e){
 };
 
 /* ---------- 日历 ---------- */
-var CAL_EVENTS={};
-function calAdd(iso,em,label){
+var CAL_EVENTS={}, calFilter=null;
+function calAdd(iso,em,label,cat){
   if(!iso)return;
   if(!CAL_EVENTS[iso])CAL_EVENTS[iso]=[];
-  CAL_EVENTS[iso].push({em:em,label:label});
+  CAL_EVENTS[iso].push({em:em,label:label,cat:cat});
 }
 function buildCalEvents(){
   CAL_EVENTS={};
-  D.cares.forEach(function(c){calAdd(c.date,'🌼',c.type||'保养');});
-  D.cleans.forEach(function(c){calAdd(c.date,'🧹','保洁');});
-  if(D.nextClean)calAdd(D.nextClean,'🧹','保洁预约');
-  D.milestones.forEach(function(m){calAdd(m.date,'🎉',m.title||'里程碑');});
-  D.trips.forEach(function(t){calAdd(t.depart,'✈️','出发 · '+t.dest);if(t.ret)calAdd(t.ret,'✈️','返程 · '+t.dest);});
-  D.declutter.forEach(function(d){calAdd(d.date,'📦',d.note?('断舍离 · '+d.note):'断舍离');});
+  D.cares.forEach(function(c){calAdd(c.date,'🌼',c.type||'保养','care');});
+  D.cleans.forEach(function(c){calAdd(c.date,'🧹','保洁','clean');});
+  if(D.nextClean)calAdd(D.nextClean,'🧹','保洁预约','clean');
+  D.milestones.forEach(function(m){calAdd(m.date,'🎒',m.title||'娃','kid');});
+  D.trips.forEach(function(t){calAdd(t.depart,'✈️','出发 · '+t.dest,'trip');if(t.ret)calAdd(t.ret,'✈️','返程 · '+t.dest,'trip');});
+  D.declutter.forEach(function(d){calAdd(d.date,'📦',d.note?('断舍离 · '+d.note):'断舍离','declutter');});
 }
+$('calLegend').onclick=function(e){
+  var b=e.target.closest('.chip');if(!b)return;
+  var was=b.classList.contains('on');
+  $('calLegend').querySelectorAll('.chip').forEach(function(x){x.classList.remove('on');});
+  calFilter=was?null:b.dataset.cat;
+  if(!was)b.classList.add('on');
+  drawCalendar();
+};
 function calMonthHtml(year,m0){
   var first=new Date(year,m0,1), startDow=first.getDay();
   var daysInMonth=new Date(year,m0+1,0).getDate();
@@ -1760,8 +1772,9 @@ function calMonthHtml(year,m0){
   for(var d=1;d<=daysInMonth;d++){
     var iso=year+'-'+pad(m0+1)+'-'+pad(d);
     var evs=CAL_EVENTS[iso]||[];
+    var shown=calFilter?evs.filter(function(x){return x.cat===calFilter;}):evs;
     h+='<div class="calday'+(iso===todayStr?' today':'')+'" data-d="'+iso+'">'+d
-      +(evs.length?'<div class="dots">'+evs.slice(0,3).map(function(x){return x.em;}).join('')+'</div>':'')+'</div>';
+      +(shown.length?'<div class="dots">'+shown.slice(0,3).map(function(x){return x.em;}).join('')+'</div>':'')+'</div>';
   }
   h+='</div></div>';
   return h;
