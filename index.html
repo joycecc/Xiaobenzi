@@ -166,10 +166,12 @@ textarea:focus{outline:none;border-color:var(--teal);background:#fff}
 .calhead{font-size:14px;font-weight:700;color:var(--slate);margin:0 2px 8px}
 .calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
 .caldow{font-size:10px;color:var(--muted);text-align:center;padding-bottom:4px}
-.calday{aspect-ratio:1;border-radius:8px;background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:4px;font-size:11px;color:var(--ink);box-shadow:0 1px 2px #0000000a}
+.calday{min-height:46px;border-radius:8px;background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:4px 2px 5px;font-size:11px;color:var(--ink);box-shadow:0 1px 2px #0000000a}
 .calday.empty{background:transparent;box-shadow:none}
 .calday.today{background:var(--teal);color:#fff;font-weight:700}
-.calday .dots{font-size:9px;line-height:1;margin-top:3px;letter-spacing:-1px}
+.calday .dots{display:flex;flex-wrap:wrap;justify-content:center;align-content:flex-start;gap:1px 0;font-size:12px;line-height:1.25;margin-top:3px;max-width:44px}
+.calday .dots b{font-weight:600;font-size:8px;letter-spacing:0;color:var(--muted);align-self:center;margin-left:1px}
+.calday.today .dots b{color:#fff;opacity:.85}
 
 /* 照片 */
 .add.ph{background:var(--chip);color:var(--teal);font-size:19px;border:1px solid var(--edge)}
@@ -1774,7 +1776,7 @@ function calMonthHtml(year,m0){
     var evs=CAL_EVENTS[iso]||[];
     var shown=calFilter?evs.filter(function(x){return x.cat===calFilter;}):evs;
     h+='<div class="calday'+(iso===todayStr?' today':'')+'" data-d="'+iso+'">'+d
-      +(shown.length?'<div class="dots">'+shown.slice(0,3).map(function(x){return x.em;}).join('')+'</div>':'')+'</div>';
+      +(shown.length?'<div class="dots">'+shown.slice(0,5).map(function(x){return x.em;}).join('')+(shown.length>5?'<b>+'+(shown.length-5)+'</b>':'')+'</div>':'')+'</div>';
   }
   h+='</div></div>';
   return h;
