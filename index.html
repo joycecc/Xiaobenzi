@@ -25,7 +25,7 @@
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;background:var(--cream);overscroll-behavior-y:none}
-body{background:var(--cream);color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.5;display:flex;flex-direction:column;min-height:100dvh;overscroll-behavior-y:none}
+body{background:var(--cream);color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.5;display:flex;flex-direction:column;height:var(--app-h,100dvh);overscroll-behavior-y:none}
 button,input,textarea,select{font-family:inherit;font-size:16px;color:inherit}
 button{border:0;background:none;cursor:pointer;padding:0}
 
@@ -579,6 +579,19 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
 <div class="toast" id="toast"></div>
 
 <script>
+/* ---------- 修正 iOS 算不准屏幕高度的问题 ---------- */
+function fixAppHeight(){
+  var h=(window.visualViewport&&window.visualViewport.height)?window.visualViewport.height:window.innerHeight;
+  document.documentElement.style.setProperty('--app-h',h+'px');
+}
+fixAppHeight();
+window.addEventListener('resize',fixAppHeight);
+window.addEventListener('orientationchange',function(){setTimeout(fixAppHeight,50);});
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize',fixAppHeight);
+  window.visualViewport.addEventListener('scroll',fixAppHeight);
+}
+
 /* ---------- 离线支持 ---------- */
 if('serviceWorker' in navigator){
   window.addEventListener('load',function(){
