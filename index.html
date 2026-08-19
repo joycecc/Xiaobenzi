@@ -134,6 +134,8 @@ ul{list-style:none;margin:0;padding:0}
 .want .pr{font-family:var(--n);font-weight:700;font-size:18px}
 .eq{font-size:12px;color:var(--muted);margin-top:5px}
 .musing{font-size:14px;color:var(--ink);margin-top:9px;line-height:1.6;background:var(--fill);border-radius:10px;padding:9px 11px}
+.musing .mmeta{display:block;margin-top:4px;font-size:11px;color:var(--muted)}
+.musing .mmeta button{color:var(--muted);font-size:11px;margin-left:8px;text-decoration:underline}
 .count{display:inline-flex;gap:6px;background:var(--gold-bg);color:var(--gold-tx);font-size:13px;padding:5px 11px;border-radius:11px;margin-top:11px}
 .count.ready{background:var(--mint-bg);color:#1B5B4E}
 .two{display:flex;gap:9px;margin-top:12px}
@@ -790,16 +792,21 @@ function drawBuys(){
     return true;
   });
   $('buyList').innerHTML=list.length?list.map(function(b){
+    var notes=buyNotesArr(b);
     return '<div class="row" data-id="'+b.id+'"><div class="r1">'
       +(b.img?'<img class="thumb pic" src="'+b.img+'" alt="">':'')
       +'<span class="nm">'+esc(b.name)+'</span><span class="val">$'+money(b.amt)+'</span></div>'
-      +(b.note?'<div class="musing">'+esc(b.note)+'</div>':'')
+      +notes.map(function(n,i){return '<div class="musing">'+esc(n.t)+'<span class="mmeta">'+md(n.d)+'<button class="ntx" data-ni="'+i+'">删除</button></span></div>';}).join('')
       +'<div class="r2"><span class="tag date">'+md(b.date)+'</span>'
       +'<span class="tag '+(b.plan==='out'?'out':'in')+'">'+(b.plan==='out'?'计划外':'计划内')+'</span>'
       +(b.owed>0?'<span class="tag owe">未付 $'+money(b.owed)+'</span>':'')
       +useTag(b.used)
       +'<span class="act">'+(b.owed>0?'<button class="pay">已还清</button>':'')+'<button class="edt">改欠款</button><button class="nt">碎碎念</button><button class="del" style="font-size:18px">×</button></span></div></div>';
   }).join(''):'<div class="empty">'+(D.buys.length?'这个筛选下还没有东西。':'还没有记录。<br>把今年已经买的补进来，看见总数才踩得住刹车。')+'</div>';
+}
+function buyNotesArr(b){
+  if(!Array.isArray(b.notes))b.notes=b.note?[{t:b.note,d:b.date||todayISO()}]:[];
+  return b.notes;
 }
 $('buyFilter').onclick=function(e){
   var b=e.target.closest('.chip');if(!b)return;
@@ -814,10 +821,18 @@ $('buyList').onclick=function(e){
     save();drawBuys();return;
   }
   if(e.target.classList.contains('del')){D.buys=D.buys.filter(function(x){return x.id!=r.dataset.id;});save();drawBuys();}
+  else if(e.target.classList.contains('ntx')){
+    var notes=buyNotesArr(b);
+    notes.splice(+e.target.dataset.ni,1);
+    save();drawBuys();
+  }
   else if(e.target.classList.contains('pay')){b.owed=0;save();drawBuys();toast('还清了一笔，轻一点了。');}
   else if(e.target.classList.contains('nt')){
-    var nv=prompt('写点什么（为什么买、什么感受、随便写）',b.note||'');
-    if(nv!==null){b.note=nv.trim();save();drawBuys();}
+    var nv=prompt('写点什么（为什么买、什么感受、随便写）—— 会加一条新的，带上今天的日期','');
+    if(nv!==null&&nv.trim()){
+      buyNotesArr(b).push({t:nv.trim(),d:todayISO()});
+      save();drawBuys();
+    }
   }
   else if(e.target.classList.contains('edt')){
     var v=prompt('现在还欠多少？（每个月还了多少，就改成剩下的数）',b.owed||0);
