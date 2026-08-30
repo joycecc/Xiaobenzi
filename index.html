@@ -19,7 +19,7 @@
   --red:#9E3B36; --line:#DFE5E9;
   --fill:#F4F7F9; --track:#E7EDF0; --divider:#EEF2F4; --soft:#F1F4F6; --edge:#CFE0E2;
   --outbg:#F6E2E0; --rose-line:#EBC9BE; --rose-tx:#8A4436; --xmark:#C9D1D6;
-  --veil:#2B3A44EE; --ontl:#FFFFFF;
+  --veil:#2B3A44EE; --ontl:#FFFFFF; --wlink:#6E5AA0; --wlink-bg:#EFEAF6;
   --f:"PingFang SC","HarmonyOS Sans SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,sans-serif;
   --n:"SF Pro Rounded",ui-rounded,"PingFang SC",system-ui,sans-serif;
 }
@@ -182,6 +182,24 @@ textarea:focus{outline:none;border-color:var(--teal);background:#fff}
 .prev img{width:56px;height:56px;object-fit:cover;border-radius:12px;border:1px solid var(--line)}
 .prev button{font-size:13px;color:var(--red);font-weight:600}
 .thumb{width:46px;height:46px;flex:none;object-fit:cover;border-radius:11px;border:1px solid var(--line)}
+.pri-head{margin:6px 4px 18px}
+.pri-eyebrow{font-family:var(--n);font-size:12px;font-weight:700;letter-spacing:.16em;color:var(--gold-line);text-transform:uppercase;margin:0 0 9px}
+.pri-title{font-size:23px;font-weight:700;color:var(--slate);line-height:1.42;margin:0 0 8px;letter-spacing:-.01em}
+.pri-meta{font-family:var(--n);font-size:12px;color:var(--muted);margin:0}
+.priority{position:relative;padding:16px 34px 16px 18px;margin-bottom:10px;border-left:3px solid var(--slate);background:var(--card);border-radius:0 12px 12px 0;transition:background .6s}
+.priority.flash{background:var(--wlink-bg)}
+.priority .rank{position:relative;font-family:var(--n);font-size:12px;font-weight:700;color:var(--wlink);letter-spacing:.02em;background:var(--wlink-bg);display:inline-flex;align-items:center;justify-content:center;width:27px;height:22px;border-radius:7px;margin-bottom:9px}
+.priority .rank::before,.priority .rank::after{content:'';position:absolute;top:-5px;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:7px solid var(--wlink-bg)}
+.priority .rank::before{left:1px;transform:rotate(-18deg)}
+.priority .rank::after{right:1px;transform:rotate(18deg)}
+.priority .txt{font-size:18px;font-weight:700;color:var(--slate);line-height:1.5;letter-spacing:-.01em;display:block}
+.priority .wlink{color:var(--wlink);background:var(--wlink-bg);border-radius:5px;padding:1px 5px;font-weight:700;cursor:pointer}
+.priority .back{margin-top:9px;font-size:12px;color:var(--wlink);line-height:1.5}
+.priority .pdel{position:absolute;top:16px;right:8px;font-size:12px;color:var(--muted);font-weight:400;background:none}
+.pri-add{display:flex;flex-direction:column;gap:6px;margin-top:6px;padding:12px;background:var(--fill);border-radius:12px}
+.pri-add input{border:none;background:none;padding:4px 2px;font-size:15px;color:var(--ink)}
+.pri-add input::placeholder{color:var(--muted);font-size:12.5px}
+.pri-add button{align-self:flex-end;border:none;background:none;color:var(--teal);font-weight:700;font-size:14px;padding:4px}
 .dcprev-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .dcprev-row .tw{position:relative}
 .dcprev-row .tw img{width:56px;height:56px;object-fit:cover;border-radius:12px;border:1px solid var(--line);display:block}
@@ -195,7 +213,10 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
 .tab{flex:1;padding:8px 0 9px;text-align:center;color:var(--muted);font-size:8.5px}
 .tab em{display:block;font-style:normal;font-size:16px;margin-bottom:2px;filter:grayscale(1);opacity:.5}
 .tab.on{color:var(--teal);font-weight:700}
-.tab.on em{filter:none;opacity:1}
+.tab.on em{position:relative;filter:none;opacity:1;background:var(--wlink-bg);border-radius:9px;width:30px;height:26px;display:flex;align-items:center;justify-content:center;margin:0 auto 3px}
+.tab.on em::before,.tab.on em::after{content:'';position:absolute;top:-6px;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:8px solid var(--wlink-bg)}
+.tab.on em::before{left:2px;transform:rotate(-18deg)}
+.tab.on em::after{right:2px;transform:rotate(18deg)}
 
 .sheet{position:fixed;inset:0;background:var(--veil);display:none;align-items:flex-end;z-index:20}
 .sheet.on{display:flex}
@@ -230,7 +251,7 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
 
 <main>
   <!-- 0 清单 -->
-  <section class="page on" id="p0">
+  <section class="page" id="p0">
     <div id="bkNote"></div>
     <div class="card">
       <div class="entry"><input type="text" id="todoIn" placeholder="今天要做什么…" enterkeyhint="done"><button class="add" id="todoAdd" aria-label="添加">+</button></div>
@@ -513,11 +534,26 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
     <p class="sec">记录</p>
     <div id="dcList"></div>
   </section>
+
+  <!-- 10 首页 -->
+  <section class="page on" id="p10">
+    <div class="pri-head">
+      <p class="pri-eyebrow">北极星</p>
+      <h1 class="pri-title">日子会吵，<br>记住这几条就够了。</h1>
+      <p class="pri-meta" id="priMeta"></p>
+    </div>
+    <div id="priList"></div>
+    <div class="pri-add">
+      <input type="text" id="priText" placeholder="再想到一条，写下来…想连到别的条目就用「[[ ]]」括起来">
+      <button id="priAdd" aria-label="添加">加一条 →</button>
+    </div>
+  </section>
 </main>
 
 <nav>
+  <button class="tab on" data-i="10"><em>🧭</em>首页</button>
   <button class="tab" data-i="8"><em>📅</em>日历</button>
-  <button class="tab on" data-i="0"><em>📝</em>清单</button>
+  <button class="tab" data-i="0"><em>📝</em>清单</button>
   <button class="tab" data-i="1"><em>💎</em>花销</button>
   <button class="tab" data-i="6"><em>📈</em>股票</button>
   <button class="tab" data-i="2"><em>🧹</em>保洁</button>
@@ -609,11 +645,12 @@ function save(){
 }
 function load(){var r=null;try{r=localStorage.getItem('xbz3')||localStorage.getItem('xbz2')||localStorage.getItem('xbz');}catch(e){r=mem.x||null;}try{return r?JSON.parse(r):null;}catch(e){return null;}}
 var D=load()||{};
-['todos','buys','wants','needs','cleans','cares','classes','pays','ideas','joys','stocks','trades','trips','portShots','milestones','diary','declutter'].forEach(function(k){if(!Array.isArray(D[k]))D[k]=[];});
+['todos','buys','wants','needs','cleans','cares','classes','pays','ideas','joys','stocks','trades','trips','portShots','milestones','diary','declutter','priorities'].forEach(function(k){if(!Array.isArray(D[k]))D[k]=[];});
 if(D.upCol!=='red')D.upCol=D.upCol||'green';
 if(typeof D.capOut!=='number')D.capOut=3000;
 if(!Array.isArray(D.kids))D.kids=['哥哥','妹妹'];
 if(!Array.isArray(D.classTypes)||!D.classTypes.length)D.classTypes=[{e:'📚',n:'补习班'},{e:'🛝',n:'玩耍'},{e:'🗡️',n:'击剑'}];
+if(!Array.isArray(D.priorities)||!D.priorities.length)D.priorities=[{id:1,t:'保护身体'},{id:2,t:'美国赚钱中国花'},{id:3,t:'不吃压力，多陪陪[[保护身体]]'}];
 if(!D.ref)D.ref={name:'个月课后班',amt:480};
 if(typeof D.nextClean!=='string')D.nextClean='';
 /* migrate old spends */
@@ -1647,7 +1684,7 @@ $('lb').onclick=function(){$('lb').classList.remove('on');$('lbImg').removeAttri
 
 /* ---------- 一键备份 ---------- */
 function applyData(d){
-  ['todos','buys','wants','needs','cleans','cares','classes','pays','ideas','joys','stocks','trades','trips','portShots','milestones','diary','declutter'].forEach(function(k){if(!Array.isArray(d[k]))d[k]=[];});
+  ['todos','buys','wants','needs','cleans','cares','classes','pays','ideas','joys','stocks','trades','trips','portShots','milestones','diary','declutter','priorities'].forEach(function(k){if(!Array.isArray(d[k]))d[k]=[];});
   if(typeof d.capOut!=='number')d.capOut=3000;
   if(!Array.isArray(d.kids))d.kids=['哥哥','妹妹'];
   if(!d.ref)d.ref={name:'个月课后班',amt:480};
@@ -1789,6 +1826,59 @@ $('dcList').onclick=function(e){
   D.declutter=D.declutter.filter(function(x){return x.id!=c.dataset.id;});save();drawDeclutter();
 };
 
+/* ---------- 首页 ---------- */
+function plainText(t){return t.replace(/\[\[([^\[\]]+?)\]\]/g,'$1').trim();}
+function renderPriText(t){
+  return esc(t).replace(/\[\[([^\[\]]+?)\]\]/g,function(m,term){
+    return '<span class="wlink" data-term="'+esc(term.trim())+'">'+esc(term.trim())+'</span>';
+  });
+}
+function backlinksFor(p){
+  var pt=plainText(p.t);
+  return D.priorities.filter(function(o){
+    if(o.id===p.id)return false;
+    var re=/\[\[([^\[\]]+?)\]\]/g,m;
+    while((m=re.exec(o.t))){if(m[1].trim()===pt)return true;}
+    return false;
+  });
+}
+function drawPri(){
+  var linked=D.priorities.filter(function(p){return backlinksFor(p).length||/\[\[[^\[\]]+?\]\]/.test(p.t);}).length;
+  $('priMeta').textContent=D.priorities.length?(D.priorities.length+' 条'+(linked?' · '+linked+' 条有连接':'')):'';
+  $('priList').innerHTML=D.priorities.length?D.priorities.map(function(p,i){
+    var backs=backlinksFor(p);
+    return '<div class="priority" data-id="'+p.id+'">'
+      +'<span class="rank">'+String(i+1).padStart(2,'0')+'</span>'
+      +'<span class="txt">'+renderPriText(p.t)+'</span>'
+      +(backs.length?'<div class="back">← 被提到：'+backs.map(function(b){return esc(plainText(b.t));}).join('、')+'</div>':'')
+      +'<button class="pdel">拿掉</button></div>';
+  }).join(''):'<div class="empty">还没写。<br>想一直记得的事，写下来才不会被日子冲淡。</div>';
+}
+$('priAdd').onclick=function(){
+  var t=$('priText').value.trim();if(!t){toast('写点什么');return;}
+  D.priorities.push({id:Date.now(),t:t});
+  $('priText').value='';save();drawPri();
+};
+$('priText').addEventListener('keydown',function(e){if(e.key==='Enter')$('priAdd').click();});
+$('priList').onclick=function(e){
+  if(e.target.classList.contains('wlink')){
+    var term=e.target.dataset.term;
+    var target=D.priorities.filter(function(x){return plainText(x.t)===term;})[0];
+    if(target){
+      var el=$('priList').querySelector('[data-id="'+target.id+'"]');
+      if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.classList.add('flash');setTimeout(function(){el.classList.remove('flash');},1200);}
+    }else if(confirm('还没有「'+term+'」这一条，现在加一条吗？')){
+      D.priorities.push({id:Date.now(),t:term});
+      save();drawPri();
+    }
+    return;
+  }
+  if(!e.target.classList.contains('pdel'))return;
+  var c=e.target.closest('.priority');if(!c)return;
+  D.priorities=D.priorities.filter(function(x){return x.id!=c.dataset.id;});
+  save();drawPri();
+};
+
 /* ---------- 日历 ---------- */
 var CAL_EVENTS={}, calFilter=null;
 function calAdd(iso,em,label,cat){
@@ -1843,7 +1933,7 @@ $('calWrap').onclick=function(e){
   toast(c.dataset.d+'　'+evs.map(function(x){return x.em+' '+x.label;}).join(' · '));
 };
 
-function drawAll(){drawTodos();drawBuys();drawWants();drawNeeds();drawCleans();drawCares();drawKid();drawMilestones();drawDiary();drawStocks();drawTrips();drawDeclutter();drawIdeas();drawCheer();drawBkNote();drawCalendar();}
+function drawAll(){drawTodos();drawBuys();drawWants();drawNeeds();drawCleans();drawCares();drawKid();drawMilestones();drawDiary();drawStocks();drawTrips();drawDeclutter();drawPri();drawIdeas();drawCheer();drawBkNote();drawCalendar();}
 drawKidSeg();drawAll();cheerUp();
 </script>
 </body>
