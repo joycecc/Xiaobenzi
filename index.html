@@ -192,11 +192,9 @@ textarea:focus{outline:none;border-color:var(--teal);background:#fff}
 .priority .rank::before,.priority .rank::after{content:'';position:absolute;top:-5px;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:7px solid var(--wlink-bg)}
 .priority .rank::before{left:1px;transform:rotate(-18deg)}
 .priority .rank::after{right:1px;transform:rotate(18deg)}
-.cn-row{display:flex;align-items:flex-start;gap:9px;padding:9px 2px;border-bottom:1px solid var(--line);font-size:14px}
-.cn-row:last-child{border-bottom:none}
-.cn-date{font-size:16px;flex:none;width:22px;text-align:center}
-.cn-txt{flex:1;color:var(--ink);min-width:0}
-.cn-del{color:var(--muted);font-size:13px;flex:none}
+.particles{display:flex;flex-wrap:wrap;gap:7px 14px;align-items:baseline;justify-content:center;padding:8px 4px 16px}
+.particle{font-weight:700;cursor:pointer;line-height:1.3;white-space:nowrap}
+.particle i{font-style:normal;font-size:10px;color:var(--muted);margin-left:2px;font-weight:400}
 .priority .txt{font-size:18px;font-weight:700;color:var(--slate);line-height:1.5;letter-spacing:-.01em;display:block}
 .priority .wlink{color:var(--wlink);background:var(--wlink-bg);border-radius:5px;padding:1px 5px;font-weight:700;cursor:pointer}
 .priority .back{margin-top:9px;font-size:12px;color:var(--wlink);line-height:1.5}
@@ -537,14 +535,13 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
       <button class="chip" data-cat="note">📌 备忘</button>
       <button class="chip" data-cat="health">🩺 健康</button>
     </div>
-    <p class="hint" style="margin:10px 0 16px">点某天看当天有什么；想加东西，去最下面点"➕"，日期会记得你刚点的那天。往下滑看未来 6 个月，点类型筛选。</p>
-    <div id="calWrap"></div>
-    <p class="sec">备忘</p>
+    <p class="hint" style="margin:10px 0 16px">点某天看当天有什么；往下滑看未来 6 个月；点类型筛选。</p>
+    <div id="cnList"></div>
     <button class="chip" id="cnToggle">➕ 加一条（可挑图标）</button>
     <div class="card" id="cnForm" style="display:none;margin-top:10px">
       <div class="entry"><input type="text" id="cnEmoji" placeholder="📌" style="max-width:50px;flex:none"><input type="date" id="cnDate" style="max-width:130px"><input type="text" id="cnText" placeholder="比如：阿姨歇班"><button class="add" id="cnAdd" aria-label="加到日历">+</button></div>
     </div>
-    <div id="cnList"></div>
+    <div id="calWrap" style="margin-top:16px"></div>
   </section>
 
   <!-- 9 断舍离 -->
@@ -2052,20 +2049,27 @@ function buildCalEvents(){
   D.calNotes.forEach(function(n){calAdd(n.date,n.em||'📌',n.text,'note');});
   D.health.forEach(function(h){if(!h.done)calAdd(h.date,'🩺',h.doctor,'health');});
 }
+var PARTICLE_COLORS=['var(--teal)','var(--gold-tx)','var(--wlink)','var(--rose-tx)','var(--slate)'];
+var CN_GROUPS={};
 function drawCalNotes(){
-  if(!D.calNotes.length){$('cnList').innerHTML='';return;}
-  var groups={};
-  D.calNotes.forEach(function(n){
-    var key=(n.em||'📌')+'|'+n.text;
-    if(!groups[key])groups[key]={em:n.em||'📌',text:n.text,dates:[]};
-    groups[key].dates.push(n.date);
+  CN_GROUPS={};
+  Object.keys(CAL_EVENTS).forEach(function(date){
+    CAL_EVENTS[date].forEach(function(ev){
+      var key=ev.cat+'|'+ev.em+'|'+ev.label;
+      if(!CN_GROUPS[key])CN_GROUPS[key]={em:ev.em,text:ev.label,cat:ev.cat,dates:[]};
+      CN_GROUPS[key].dates.push(date);
+    });
   });
-  var rows=Object.keys(groups).map(function(k){return {key:k,g:groups[k]};});
-  rows.sort(function(a,b){var da=a.g.dates.slice().sort().pop(),db=b.g.dates.slice().sort().pop();return da<db?1:-1;});
-  $('cnList').innerHTML=rows.map(function(r){
-    var dates=r.g.dates.slice().sort().map(md).join('、');
-    return '<div class="cn-row" data-key="'+esc(r.key)+'"><span class="cn-date">'+r.g.em+'</span><span class="cn-txt">'+esc(r.g.text)+'<span style="color:var(--muted);font-size:12px;display:block">'+dates+'</span></span><button class="cn-del">删除</button></div>';
-  }).join('');
+  var rows=Object.keys(CN_GROUPS).map(function(k){return {key:k,g:CN_GROUPS[k]};});
+  if(!rows.length){$('cnList').innerHTML='';return;}
+  var counts=rows.map(function(r){return r.g.dates.length;});
+  var min=Math.min.apply(null,counts), max=Math.max.apply(null,counts);
+  rows.sort(function(a,b){return b.g.dates.length-a.g.dates.length;});
+  $('cnList').innerHTML='<div class="particles">'+rows.map(function(r,i){
+    var c=r.g.dates.length;
+    var sz=max===min?18:Math.round(13+(c-min)/(max-min)*19);
+    return '<span class="particle" data-key="'+esc(r.key)+'" style="font-size:'+sz+'px;color:'+PARTICLE_COLORS[i%PARTICLE_COLORS.length]+'">'+r.g.em+' '+esc(r.g.text)+(c>1?'<i>×'+c+'</i>':'')+'</span>';
+  }).join('')+'</div>';
 }
 $('cnDate').value=todayISO();
 $('cnToggle').onclick=function(){
@@ -2081,11 +2085,14 @@ $('cnAdd').onclick=function(){
 };
 $('cnText').addEventListener('keydown',function(e){if(e.key==='Enter')$('cnAdd').click();});
 $('cnList').onclick=function(e){
-  if(!e.target.classList.contains('cn-del'))return;
-  var c=e.target.closest('.cn-row');if(!c)return;
-  var key=c.dataset.key;
-  D.calNotes=D.calNotes.filter(function(x){return (x.em||'📌')+'|'+x.text!==key;});
-  save();drawCalendar();drawCalNotes();
+  var p=e.target.closest('.particle');if(!p)return;
+  var g=CN_GROUPS[p.dataset.key];if(!g)return;
+  var list=g.dates.slice().sort().map(md).join('、');
+  if(g.cat!=='note'){alert(g.em+' '+g.text+'\n\n'+list);return;}
+  if(confirm(list+'\n\n把这条删掉？（'+g.dates.length+' 个日期一起删）')){
+    D.calNotes=D.calNotes.filter(function(x){return !((x.em||'📌')===g.em&&x.text===g.text);});
+    save();drawCalendar();drawCalNotes();
+  }
 };
 $('calLegend').onclick=function(e){
   var b=e.target.closest('.chip');if(!b)return;
