@@ -192,6 +192,11 @@ textarea:focus{outline:none;border-color:var(--teal);background:#fff}
 .priority .rank::before,.priority .rank::after{content:'';position:absolute;top:-5px;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:7px solid var(--wlink-bg)}
 .priority .rank::before{left:1px;transform:rotate(-18deg)}
 .priority .rank::after{right:1px;transform:rotate(18deg)}
+.cn-row{display:flex;align-items:center;gap:9px;padding:9px 2px;border-bottom:1px solid var(--line);font-size:14px}
+.cn-row:last-child{border-bottom:none}
+.cn-date{font-family:var(--n);font-size:12px;color:var(--muted);flex:none;width:38px}
+.cn-txt{flex:1;color:var(--ink);min-width:0}
+.cn-del{color:var(--muted);font-size:13px;flex:none}
 .priority .txt{font-size:18px;font-weight:700;color:var(--slate);line-height:1.5;letter-spacing:-.01em;display:block}
 .priority .wlink{color:var(--wlink);background:var(--wlink-bg);border-radius:5px;padding:1px 5px;font-weight:700;cursor:pointer}
 .priority .back{margin-top:9px;font-size:12px;color:var(--wlink);line-height:1.5}
@@ -253,7 +258,8 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
   <!-- 0 清单 -->
   <section class="page" id="p0">
     <div id="bkNote"></div>
-    <div class="card">
+    <button class="chip" id="todoToggle">➕ 加一条待办</button>
+    <div class="card" id="todoBox" style="display:none;margin-top:10px">
       <div class="entry"><input type="text" id="todoIn" placeholder="今天要做什么…" enterkeyhint="done"><button class="add" id="todoAdd" aria-label="添加">+</button></div>
     </div>
     <div class="card"><ul id="todoList"></ul></div>
@@ -282,7 +288,8 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
       </div>
       <div id="buyNote"></div>
 
-      <div class="card">
+      <button class="chip" id="bToggle">➕ 记一笔</button>
+      <div class="card" id="bBox" style="display:none;margin-top:10px">
         <div class="entry"><input type="text" id="bName" placeholder="买了什么"><input type="number" id="bAmt" placeholder="金额" inputmode="decimal" style="max-width:110px"></div>
         <div class="entry"><input type="date" id="bDate"><input type="number" id="bOwe" placeholder="未付清金额" inputmode="decimal"></div>
         <div class="chips">
@@ -307,7 +314,8 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
         <div class="cap" id="savedSub">冷静期结束后选「算了」，钱就留在这里</div>
       </div>
       <div class="note gold"><b>⏳ 想买就先放进来</b>冷静期没到不做决定。熬过去的才算「计划内」。</div>
-      <div class="card">
+      <button class="chip" id="wantToggle">➕ 加一个想买的</button>
+      <div class="card" id="wantBox" style="display:none;margin-top:10px">
         <div class="entry"><input type="text" id="wantIn" placeholder="想买的东西"><input type="number" id="wantAmt" placeholder="价格" inputmode="decimal" style="max-width:110px"></div>
         <div class="chips" id="days"></div>
         <textarea id="wantNote" placeholder="碎碎念（为什么想要，纠结什么，随便写…）" style="min-height:56px;margin-top:10px"></textarea>
@@ -317,7 +325,8 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
       <div id="wantList"></div>
       <p class="sec">一定要买 · 还没买</p>
       <div class="note mint"><b>💡 这些不用等</b>已经想清楚了，就不用走冷静期，买了记得回来点「买了」。</div>
-      <div class="card">
+      <button class="chip" id="needToggle">➕ 加一个确定要买的</button>
+      <div class="card" id="needBox" style="display:none;margin-top:10px">
         <div class="entry"><input type="text" id="needIn" placeholder="确定要买的东西"><input type="number" id="needAmt" placeholder="价格（可不填）" inputmode="decimal" style="max-width:130px"></div>
         <textarea id="needNote" placeholder="碎碎念（急用 / 缺货 / 等发工资…）" style="min-height:56px"></textarea>
         <button class="fullbtn" id="needAdd" style="background:var(--mint-line)">加进清单</button>
@@ -335,7 +344,8 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
       <div class="num" id="clYear">$0</div>
       <div class="cap" id="clCap">还没有记录</div>
     </div>
-    <div class="card">
+    <button class="chip" id="cToggle">➕ 记一次上门</button>
+    <div class="card" id="cBox" style="display:none;margin-top:10px">
       <div class="entry"><input type="date" id="cDate"><input type="number" id="cAmt" placeholder="费用" inputmode="decimal"></div>
       <div class="entry"><input type="text" id="cNote" placeholder="阿姨 / 公司 · 备注"><button class="add" id="cAdd" aria-label="记录">+</button></div>
     </div>
@@ -343,7 +353,8 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
     <div class="card"><div id="clList"></div></div>
     <p class="sec">预约</p>
     <div id="clPending"></div>
-    <div class="card">
+    <button class="chip" id="clNextToggle">➕ 约下一次</button>
+    <div class="card" id="clNextBox" style="display:none;margin-top:10px">
       <p class="h">改约 / 约下一次</p>
       <div class="entry"><input type="date" id="clNext"><input type="time" id="clNextT" style="max-width:120px"><button class="add" id="clNextSave" aria-label="保存">✓</button></div>
       <div class="entry"><button class="fullbtn" id="clCal" style="background:var(--chip);color:var(--teal);margin-top:2px">📅 加到 Google 日历</button></div>
@@ -361,7 +372,8 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
       <p class="h">距上次</p>
       <div id="caGaps"></div>
     </div>
-    <div class="card">
+    <button class="chip" id="aToggle">➕ 记一次</button>
+    <div class="card" id="aBox" style="display:none;margin-top:10px">
       <div class="chips" id="caTypes"></div>
       <div class="entry" style="margin-top:11px"><input type="date" id="aDate"><input type="number" id="aAmt" placeholder="费用" inputmode="decimal"></div>
       <div class="entry"><input type="text" id="aNote" placeholder="医生 / 项目 / 感受"><button class="add" id="aAdd" aria-label="记录">+</button></div>
@@ -369,7 +381,8 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
     <p class="sec">记录</p>
     <div class="card"><div id="caList"></div></div>
     <p class="sec">预约</p>
-    <div class="card">
+    <button class="chip" id="nxToggle">➕ 约下次</button>
+    <div class="card" id="nxBox" style="display:none;margin-top:10px">
       <p class="h">下次预约</p>
       <div class="entry"><input type="text" id="nxName" placeholder="项目（如 针灸 / Botox）"></div>
       <div class="entry"><input type="date" id="nxDate"><input type="time" id="nxTime" style="max-width:120px"></div>
@@ -384,16 +397,21 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
     <p class="sec">课表</p>
     <div class="card">
       <div class="bar-row" style="margin:0 0 12px"><span class="lb" style="width:auto;color:var(--ink);font-weight:600" id="clsYear">今年上课 0 次</span><span class="am" id="clsAll"></span></div>
+      <div id="scList" style="margin-top:6px"></div>
+    </div>
+    <button class="chip" id="scToggle">➕ 加一门课</button>
+    <div class="card" id="scBox" style="display:none;margin-top:10px">
       <div class="entry"><input type="text" id="scName" placeholder="课程（如 架子鼓）"></div>
       <div class="chips" id="scTypes" style="margin-bottom:9px"></div>
       <div class="entry"><input type="text" id="scWho" placeholder="老师 / 机构"></div>
       <div class="chips" id="scDows"></div>
       <div class="entry" style="margin-top:10px"><input type="time" id="scTime"><input type="number" id="scMins" placeholder="分钟" value="60" inputmode="numeric" style="max-width:90px"><button class="add" id="scAdd" aria-label="添加">+</button></div>
-      <div id="scList" style="margin-top:6px"></div>
     </div>
 
     <p class="sec">里程碑</p>
-    <div class="card">
+    <div id="msList"></div>
+    <button class="chip" id="msToggle">➕ 记一个里程碑</button>
+    <div class="card" id="msBox" style="display:none;margin-top:10px">
       <div class="entry"><input type="text" id="msTitle" placeholder="里程碑（如 第一次会走路）"></div>
       <div class="entry"><input type="date" id="msDate"></div>
       <textarea id="msNote" placeholder="想记的细节…" style="min-height:60px"></textarea>
@@ -402,14 +420,14 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
       <input type="file" id="msFile" accept="image/*" style="display:none">
       <button class="fullbtn" id="msAdd" style="margin-top:10px">记下这一刻</button>
     </div>
-    <div id="msList"></div>
 
     <p class="sec">碎碎念</p>
-    <div class="card">
+    <div id="dyList"></div>
+    <button class="chip" id="dyToggle">➕ 写一条</button>
+    <div class="card" id="dyBox" style="display:none;margin-top:10px">
       <textarea id="dyIn" placeholder="随便写点什么…"></textarea>
       <button class="fullbtn" id="dyAdd" style="background:var(--mint-line)">收进来</button>
     </div>
-    <div id="dyList"></div>
   </section>
 
   <!-- 6 股票 -->
@@ -427,7 +445,8 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
     <div id="stNote"></div>
     <p class="sec">持仓</p>
     <div class="card"><div id="posList"></div></div>
-    <div class="card">
+    <button class="chip" id="tBulkToggle">➕ 批量导入</button>
+    <div class="card" id="tBulkBox" style="display:none;margin-top:10px">
       <p class="h">批量导入（截图抄的都行）</p>
       <p class="hint" style="margin:0 0 10px">这里读不了图，是我在聊天里帮你看：把截图直接发在这次对话里（跟发照片给朋友一样），我读出代码、股数、成本价，照下面这个格式发回来，你贴进框里点导入。</p>
       <textarea id="tBulk" placeholder="一行一支，格式：代码 股数 成本价&#10;例如：&#10;AAPL 10 150.2&#10;TSLA 5 220"></textarea>
@@ -436,7 +455,8 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
       <input type="file" id="tShotFile" accept="image/*" style="display:none">
       <div id="tShots" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div>
     </div>
-    <div class="card">
+    <button class="chip" id="tBuyToggle">➕ 记一笔买入</button>
+    <div class="card" id="tBuyBox" style="display:none;margin-top:10px">
       <p class="h">买入</p>
       <div class="entry"><input type="text" id="tSym" placeholder="代码 如 AAPL" autocapitalize="characters"><input type="number" id="tQty" placeholder="股数" inputmode="decimal" style="max-width:100px"></div>
       <div class="entry"><input type="number" id="tPrice" placeholder="买入价" inputmode="decimal"><input type="date" id="tDate"></div>
@@ -460,7 +480,8 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
     <div class="card"><div id="tripList"></div></div>
     <p class="sec">预约</p>
     <div id="tripPending"></div>
-    <div class="card">
+    <button class="chip" id="trToggle">➕ 加一趟行程</button>
+    <div class="card" id="trBox" style="display:none;margin-top:10px">
       <p class="h">加一趟行程</p>
       <div class="entry"><input type="text" id="trDest" placeholder="目的地 如 上海"><input type="text" id="trFrom" placeholder="出发地" style="max-width:110px"></div>
       <div class="entry"><input type="date" id="trDepart"><input type="date" id="trReturn"></div>
@@ -484,7 +505,8 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
         <div class="stat"><b id="sOut">0</b><span>今年计划外</span></div>
       </div>
       <p class="sec">今天的小确幸</p>
-      <div class="card">
+      <button class="chip" id="joyToggle">➕ 记一件</button>
+      <div class="card" id="joyBox" style="display:none;margin-top:10px">
         <div class="entry"><input type="text" id="joyIn" placeholder="一件让你嘴角上扬的小事…"><button class="add ph" id="joyPh" aria-label="加照片">📷</button><button class="add" id="joyAdd" aria-label="记下">+</button></div>
         <div class="prev" id="jPrev"><img id="jPrevImg" alt=""><button id="jPrevX">去掉</button></div>
         <input type="file" id="jFile" accept="image/*" style="display:none">
@@ -498,7 +520,8 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
       </div>
     </div>
     <div class="sub" id="s51">
-      <div class="card"><textarea id="ideaIn" placeholder="一个念头、一句话、一个想试试的事…"></textarea><button class="fullbtn" id="ideaAdd">收进来</button></div>
+      <button class="chip" id="ideaToggle">➕ 记一个念头</button>
+      <div class="card" id="ideaBox" style="display:none;margin-top:10px"><textarea id="ideaIn" placeholder="一个念头、一句话、一个想试试的事…"></textarea><button class="fullbtn" id="ideaAdd">收进来</button></div>
       <div id="ideaList"></div>
     </div>
   </section>
@@ -511,8 +534,15 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
       <button class="chip" data-cat="kid">🎒 娃</button>
       <button class="chip" data-cat="trip">✈️ 出行</button>
       <button class="chip" data-cat="declutter">📦 断舍离</button>
+      <button class="chip" data-cat="note">📌 备忘</button>
+      <button class="chip" data-cat="health">🩺 健康</button>
     </div>
     <p class="hint" style="margin:10px 0 16px">点一个类型只看那类，再点一下恢复全部看。往下滑看未来 6 个月，点某天看当天详情。</p>
+    <button class="chip" id="cnToggle">➕ 记一件事</button>
+    <div class="card" id="cnForm" style="display:none;margin-top:10px">
+      <div class="entry"><input type="text" id="cnEmoji" placeholder="📌" style="max-width:50px;flex:none"><input type="date" id="cnDate" style="max-width:130px"><input type="text" id="cnText" placeholder="比如：阿姨歇班"><button class="add" id="cnAdd" aria-label="加到日历">+</button></div>
+      <div id="cnList"></div>
+    </div>
     <div id="calWrap"></div>
   </section>
 
@@ -523,7 +553,8 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
       <div class="num" id="dcYear">0</div>
       <div class="cap" id="dcCap">还没有记录</div>
     </div>
-    <div class="card">
+    <button class="chip" id="dcToggle">➕ 记一件</button>
+    <div class="card" id="dcBox" style="display:none;margin-top:10px">
       <div class="entry"><input type="date" id="dcDate"></div>
       <textarea id="dcNote" placeholder="断舍离了什么，为什么，什么感受…" style="min-height:70px"></textarea>
       <div class="entry" style="margin-top:2px"><button class="chip" id="dcPh">📷 加照片（可多张）</button></div>
@@ -543,10 +574,31 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
       <p class="pri-meta" id="priMeta"></p>
     </div>
     <div id="priList"></div>
-    <div class="pri-add">
+    <button class="chip" id="priToggle">➕ 加一条</button>
+    <div class="pri-add" id="priBox" style="display:none">
       <input type="text" id="priText" placeholder="再想到一条，写下来…想连到别的条目就用「[[ ]]」括起来">
       <button id="priAdd" aria-label="添加">加一条 →</button>
     </div>
+  </section>
+
+  <!-- 11 健康 -->
+  <section class="page" id="p11">
+    <div class="card hero">
+      <p class="h">健康 · 今年</p>
+      <div class="num" id="hlYear">0</div>
+      <div class="cap" id="hlCap">还没有记录</div>
+    </div>
+    <p class="sec">预约</p>
+    <div id="hlPending"></div>
+    <button class="chip" id="hlToggle">➕ 加一个预约</button>
+    <div class="card" id="hlBox" style="display:none;margin-top:10px">
+      <div class="entry"><input type="text" id="hlDoc" placeholder="医生 / 科室"></div>
+      <div class="entry"><input type="date" id="hlDate"><input type="time" id="hlTime" style="max-width:120px"></div>
+      <textarea id="hlPrep" placeholder="想跟医生聊什么，先写下来，到时候不会忘…" style="min-height:70px"></textarea>
+      <button class="fullbtn" id="hlAdd" style="margin-top:10px">记下预约</button>
+    </div>
+    <p class="sec">记录</p>
+    <div id="hlList"></div>
   </section>
 </main>
 
@@ -558,6 +610,7 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
   <button class="tab" data-i="6"><em>📈</em>股票</button>
   <button class="tab" data-i="2"><em>🧹</em>保洁</button>
   <button class="tab" data-i="3"><em>💆</em>保养</button>
+  <button class="tab" data-i="11"><em>🩺</em>健康</button>
   <button class="tab" data-i="4"><em>🎒</em>娃</button>
   <button class="tab" data-i="7"><em>✈️</em>出行</button>
   <button class="tab" data-i="5"><em>☀️</em>打气</button>
@@ -645,7 +698,7 @@ function save(){
 }
 function load(){var r=null;try{r=localStorage.getItem('xbz3')||localStorage.getItem('xbz2')||localStorage.getItem('xbz');}catch(e){r=mem.x||null;}try{return r?JSON.parse(r):null;}catch(e){return null;}}
 var D=load()||{};
-['todos','buys','wants','needs','cleans','cares','classes','pays','ideas','joys','stocks','trades','trips','portShots','milestones','diary','declutter','priorities'].forEach(function(k){if(!Array.isArray(D[k]))D[k]=[];});
+['todos','buys','wants','needs','cleans','cares','classes','pays','ideas','joys','stocks','trades','trips','portShots','milestones','diary','declutter','priorities','calNotes','health'].forEach(function(k){if(!Array.isArray(D[k]))D[k]=[];});
 if(D.upCol!=='red')D.upCol=D.upCol||'green';
 if(typeof D.capOut!=='number')D.capOut=3000;
 if(!Array.isArray(D.kids))D.kids=['哥哥','妹妹'];
@@ -668,6 +721,14 @@ function md(iso){var p=String(iso).split('-');return p.length===3?(+p[1])+'/'+(+
 function money(n){var s=(Math.round(n*100)/100).toFixed(2).replace(/\.00$/,'');return s.replace(/\B(?=(\d{3})+(?!\d)(\.|$))/g,',');}
 function esc(s){return String(s).replace(/[<>&]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c];});}
 function toast(m){var t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(function(){t.classList.remove('on');},2600);}
+function toggleBox(btnId,boxId,focusId){
+  $(btnId).onclick=function(){
+    var b=$(boxId), show=b.style.display==='none'||!b.style.display;
+    b.style.display=show?'block':'none';
+    if(show&&focusId){var f=$(focusId);if(f)f.focus();}
+  };
+}
+function closeBox(boxId){var b=$(boxId);if(b)b.style.display='none';}
 function eq(n){
   var name,amt;
   if(n>=20000){name='纽约中国往返（全家）';amt=20000;}
@@ -749,7 +810,7 @@ $('todoList').onclick=function(e){
   else{t.done=!t.done;t.doneOn=t.done?todayISO():null;}
   save();drawTodos();
 };
-function addTodo(){var v=$('todoIn').value.trim();if(!v)return;D.todos.unshift({id:Date.now(),text:v,done:false,doneOn:null});$('todoIn').value='';save();drawTodos();}
+function addTodo(){var v=$('todoIn').value.trim();if(!v)return;D.todos.unshift({id:Date.now(),text:v,done:false,doneOn:null});$('todoIn').value='';save();drawTodos();closeBox('todoBox');}
 $('todoAdd').onclick=addTodo;$('todoIn').onkeydown=function(e){if(e.key==='Enter')addTodo();};
 
 /* ---------- 花销：今年买的 ---------- */
@@ -767,6 +828,7 @@ $('bAdd').onclick=function(){
   pendB=null;setPrev($('bPrev'),$('bPrevImg'),null);
   save();drawBuys();
   toast(plan==='out'?('计划外 · $'+money(a)+'　'+eq(a)):('计划内 · $'+money(a)));
+  closeBox('bBox');
 };
 function useTag(u){
   return u==='yes'?'<button class="tag use yes" data-act="use">✅ 已用</button>'
@@ -893,6 +955,7 @@ $('wantAdd').onclick=function(){
   D.wants.unshift({id:Date.now(),name:nm,amt:a,days:coolDays,at:Date.now(),state:null,note:nt});
   $('wantIn').value='';$('wantAmt').value='';$('wantNote').value='';save();drawWants();
   toast(coolDays===1?'放进去了，24 小时后再决定':'放进去了，'+coolDays+' 天后再决定');
+  closeBox('wantBox');
 };
 function left(w){return w.at+w.days*86400000-Date.now();}
 function fmtLeft(ms){var h=Math.floor(ms/3600000),d=Math.floor(h/24);
@@ -952,6 +1015,7 @@ $('needAdd').onclick=function(){
   if(!nm){toast('写下要买的东西');return;}
   D.needs.unshift({id:Date.now(),name:nm,amt:isNaN(a)?0:a,note:nt});
   $('needIn').value='';$('needAmt').value='';$('needNote').value='';save();drawNeeds();toast('加进去了');
+  closeBox('needBox');
 };
 function drawNeeds(){
   $('needList').innerHTML=D.needs.length?D.needs.map(function(n){
@@ -978,10 +1042,12 @@ $('cAdd').onclick=function(){
   if(isNaN(a)||a<=0){toast('填个费用');return;}
   D.cleans.unshift({id:Date.now(),date:$('cDate').value||todayISO(),amt:a,note:$('cNote').value.trim()});
   $('cAmt').value='';$('cNote').value='';$('cDate').value=todayISO();save();drawCleans();toast('记好了');
+  closeBox('cBox');
 };
 $('clNextSave').onclick=function(){
   D.nextClean=$('clNext').value||'';D.nextCleanT=$('clNextT').value||'';
   save();drawCleans();toast(D.nextClean?'下次上门记好了':'清掉了');
+  closeBox('clNextBox');
 };
 $('clCal').onclick=function(){
   var d=$('clNext').value;
@@ -1041,11 +1107,13 @@ $('nxCal').onclick=function(){
   var d=$('nxDate').value, nm=$('nxName').value.trim()||careType;
   if(!d){toast('先选个日期');return;}
   gcal({title:'💆 '+nm,date:d,time:$('nxTime').value,mins:60,details:'来自「我的小本子」'});
+  closeBox('nxBox');
 };
 $('aAdd').onclick=function(){
   var a=parseFloat($('aAmt').value);if(isNaN(a))a=0;
   D.cares.unshift({id:Date.now(),type:careType,date:$('aDate').value||todayISO(),amt:Math.max(0,a),note:$('aNote').value.trim()});
   $('aAmt').value='';$('aNote').value='';$('aDate').value=todayISO();save();drawCares();toast('记好了。对自己好一点不用有负担。');
+  closeBox('aBox');
 };
 function careIcon(t){for(var i=0;i<CARE.length;i++)if(CARE[i][1]===t)return CARE[i][0];return '🩺';}
 function drawCares(){
@@ -1123,6 +1191,7 @@ $('scAdd').onclick=function(){
   scDow=-1;$('scDows').querySelectorAll('.chip').forEach(function(x){x.classList.remove('on');});
   clsType='';drawClassTypeChips();
   save();drawKid();
+  closeBox('scBox');
 };
 function drawKid(){
   var todayDow=new Date().getDay();
@@ -1175,6 +1244,7 @@ $('msAdd').onclick=function(){
   $('msTitle').value='';$('msDate').value=todayISO();$('msNote').value='';
   pendMs=null;setPrev($('msPrev'),$('msPrevImg'),null);
   save();drawMilestones();toast('记下这一刻了');
+  closeBox('msBox');
 };
 function drawMilestones(){
   var ms=D.milestones.filter(function(m){return m.kid===kid;});
@@ -1200,6 +1270,7 @@ $('dyAdd').onclick=function(){
   var d=new Date();
   D.diary.unshift({id:Date.now(),kid:kid,text:v,when:(d.getMonth()+1)+'月'+d.getDate()+'日'});
   $('dyIn').value='';save();drawDiary();toast('收好了');
+  closeBox('dyBox');
 };
 function drawDiary(){
   var ds=D.diary.filter(function(x){return x.kid===kid;});
@@ -1229,6 +1300,7 @@ $('trAdd').onclick=function(){
   D.trips.push({id:Date.now(),dest:dest,from:from,depart:dep,ret:ret,checkBy:cb,checked:false});
   $('trDest').value='';$('trFrom').value='';$('trDepart').value='';$('trReturn').value='';$('trCheckBy').value='';
   save();drawTrips();toast('记好了');
+  closeBox('trBox');
 };
 function drawTrips(){
   var today=todayISO();
@@ -1324,6 +1396,7 @@ function addJoy(){
   D.joys.unshift({id:Date.now(),text:v||'📷',when:(d.getMonth()+1)+'/'+d.getDate(),img:pendJ||''});
   $('joyIn').value='';pendJ=null;setPrev($('jPrev'),$('jPrevImg'),null);
   save();drawJoys();
+  closeBox('joyBox');
 }
 $('joyAdd').onclick=addJoy;$('joyIn').onkeydown=function(e){if(e.key==='Enter')addJoy();};
 function drawJoys(){
@@ -1353,6 +1426,7 @@ $('ideaAdd').onclick=function(){
   var d=new Date();
   D.ideas.unshift({id:Date.now(),text:v,when:(d.getMonth()+1)+'月'+d.getDate()+'日'});
   $('ideaIn').value='';save();drawIdeas();toast('收好了');
+  closeBox('ideaBox');
 };
 function drawIdeas(){
   $('ideaList').innerHTML=D.ideas.length?D.ideas.map(function(i){
@@ -1555,6 +1629,7 @@ $('tBulkGo').onclick=function(){
   save();drawStocks();
   if(ok)$('tBulk').value='';
   toast(ok?('导入了 '+ok+' 支'+(bad?'，'+bad+' 行看不懂':'')):'一行都没读懂，检查一下格式');
+  if(ok)closeBox('tBulkBox');
 };
 $('tBuy').onclick=function(){
   var sym=$('tSym').value.trim().toUpperCase(), q=parseFloat($('tQty').value), p=parseFloat($('tPrice').value);
@@ -1567,6 +1642,7 @@ $('tBuy').onclick=function(){
   D.trades.unshift({id:Date.now(),sym:sym,type:'buy',qty:q,price:p,date:$('tDate').value||todayISO()});
   $('tSym').value='';$('tQty').value='';$('tPrice').value='';$('tDate').value=todayISO();
   save();drawStocks();toast('记好了 · '+sym+' '+q+' 股 @ $'+money(p));
+  closeBox('tBuyBox');
 };
 function drawStocks(){
   drawShots();
@@ -1684,7 +1760,7 @@ $('lb').onclick=function(){$('lb').classList.remove('on');$('lbImg').removeAttri
 
 /* ---------- 一键备份 ---------- */
 function applyData(d){
-  ['todos','buys','wants','needs','cleans','cares','classes','pays','ideas','joys','stocks','trades','trips','portShots','milestones','diary','declutter','priorities'].forEach(function(k){if(!Array.isArray(d[k]))d[k]=[];});
+  ['todos','buys','wants','needs','cleans','cares','classes','pays','ideas','joys','stocks','trades','trips','portShots','milestones','diary','declutter','priorities','calNotes','health'].forEach(function(k){if(!Array.isArray(d[k]))d[k]=[];});
   if(typeof d.capOut!=='number')d.capOut=3000;
   if(!Array.isArray(d.kids))d.kids=['哥哥','妹妹'];
   if(!d.ref)d.ref={name:'个月课后班',amt:480};
@@ -1800,6 +1876,7 @@ $('dcAdd').onclick=function(){
   D.declutter.unshift({id:Date.now(),date:$('dcDate').value||todayISO(),note:nt,imgs:pendDc.slice()});
   $('dcNote').value='';$('dcDate').value=todayISO();pendDc=[];drawDcPrev();
   save();drawDeclutter();toast('记下来了，轻松一点');
+  closeBox('dcBox');
 };
 function dcImgs(d){return d.imgs&&d.imgs.length?d.imgs:(d.img?[d.img]:[]);}
 function drawDeclutter(){
@@ -1824,6 +1901,67 @@ $('dcList').onclick=function(e){
   }
   if(!e.target.classList.contains('del'))return;
   D.declutter=D.declutter.filter(function(x){return x.id!=c.dataset.id;});save();drawDeclutter();
+};
+
+/* ---------- 健康 ---------- */
+$('hlDate').value=todayISO();
+$('hlAdd').onclick=function(){
+  var doc=$('hlDoc').value.trim();
+  if(!doc){toast('填一下医生或科室');return;}
+  D.health.unshift({id:Date.now(),doctor:doc,date:$('hlDate').value||todayISO(),time:$('hlTime').value||'',prep:$('hlPrep').value.trim(),result:'',done:false});
+  $('hlDoc').value='';$('hlPrep').value='';$('hlDate').value=todayISO();$('hlTime').value='';
+  save();drawHealth();toast('记好了');
+  closeBox('hlBox');
+};
+function drawHealth(){
+  var y=D.health.filter(function(h){return h.done&&isYTD(h.date);});
+  $('hlYear').textContent=y.length;
+  $('hlCap').textContent=y.length?('今年看了 '+y.length+' 次'):'还没有记录';
+
+  var pend=D.health.filter(function(h){return !h.done;}).sort(function(a,b){return a.date<b.date?-1:1;});
+  $('hlPending').innerHTML=pend.length?pend.map(function(h){
+    var dleft=Math.round((new Date(h.date+'T00:00:00')-new Date(todayISO()+'T00:00:00'))/86400000);
+    var when=dleft<0?'已过期':(dleft===0?'今天':(dleft+' 天后'));
+    return '<div class="card" data-id="'+h.id+'" style="margin-bottom:10px">'
+      +'<div class="bar-row"><span class="lb" style="width:auto;color:var(--ink);font-weight:600">🩺 '+esc(h.doctor)+'</span><span class="am">'+md(h.date)+(h.time?' '+h.time:'')+'</span></div>'
+      +'<div class="mini" style="margin:4px 0 0"><span>'+when+'</span></div>'
+      +(h.prep?'<div class="musing">想聊：'+esc(h.prep)+'</div>':'')
+      +'<div class="entry" style="margin-top:10px"><button class="chip hlCal">📅 加到日历</button><button class="chip hlDone">✓ 看完了</button><button class="chip hlDel" style="color:var(--red)">删除</button></div>'
+      +'</div>';
+  }).join(''):'<div class="empty">没有排期中的预约。</div>';
+
+  var done=D.health.filter(function(h){return h.done;});
+  $('hlList').innerHTML=done.length?done.map(function(h){
+    return '<div class="idea" data-id="'+h.id+'">'
+      +'<b style="display:block;margin-bottom:4px">'+esc(h.doctor)+'</b>'
+      +(h.prep?'<div class="musing">聊了：'+esc(h.prep)+'</div>':'')
+      +(h.result?'<div class="musing" style="background:var(--mint-bg)">结果：'+esc(h.result)+'</div>':'<div class="entry" style="margin-top:8px"><button class="chip hlResult">写结果</button></div>')
+      +'<div class="stamp"><span>'+md(h.date)+'</span><button class="del" style="font-size:14px">删除</button></div></div>';
+  }).join(''):'<div class="empty">还没有看完的记录。</div>';
+}
+$('hlPending').onclick=function(e){
+  var c=e.target.closest('[data-id]');if(!c)return;
+  var h=D.health.filter(function(x){return x.id==c.dataset.id;})[0];if(!h)return;
+  if(e.target.classList.contains('hlCal')){
+    gcal({title:'🩺 '+h.doctor,date:h.date,time:h.time,mins:60,details:h.prep||'来自「我的小本子」'});
+  }else if(e.target.classList.contains('hlDone')){
+    var r=prompt('结果 / 医生怎么说（可以先留空，之后再补）','');
+    h.done=true;if(r!==null&&r.trim())h.result=r.trim();
+    save();drawHealth();toast('记好了');
+  }else if(e.target.classList.contains('hlDel')){
+    D.health=D.health.filter(function(x){return x.id!=h.id;});save();drawHealth();
+  }
+};
+$('hlList').onclick=function(e){
+  var c=e.target.closest('.idea');if(!c)return;
+  var h=D.health.filter(function(x){return x.id==c.dataset.id;})[0];if(!h)return;
+  if(e.target.classList.contains('hlResult')){
+    var r=prompt('结果 / 医生怎么说','');
+    if(r!==null&&r.trim()){h.result=r.trim();save();drawHealth();}
+    return;
+  }
+  if(!e.target.classList.contains('del'))return;
+  D.health=D.health.filter(function(x){return x.id!=h.id;});save();drawHealth();
 };
 
 /* ---------- 首页 ---------- */
@@ -1858,6 +1996,7 @@ $('priAdd').onclick=function(){
   var t=$('priText').value.trim();if(!t){toast('写点什么');return;}
   D.priorities.push({id:Date.now(),t:t});
   $('priText').value='';save();drawPri();
+  closeBox('priBox');
 };
 $('priText').addEventListener('keydown',function(e){if(e.key==='Enter')$('priAdd').click();});
 $('priList').onclick=function(e){
@@ -1886,15 +2025,56 @@ function calAdd(iso,em,label,cat){
   if(!CAL_EVENTS[iso])CAL_EVENTS[iso]=[];
   CAL_EVENTS[iso].push({em:em,label:label,cat:cat});
 }
+function classOccurrences(dow,days){
+  var out=[], d=new Date(), diff=(dow-d.getDay()+7)%7;
+  d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+diff);
+  for(var i=0;diff+i*7<=days;i++){
+    out.push(d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()));
+    d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+7);
+  }
+  return out;
+}
 function buildCalEvents(){
   CAL_EVENTS={};
   D.cares.forEach(function(c){calAdd(c.date,'🌼',c.type||'保养','care');});
   D.cleans.forEach(function(c){calAdd(c.date,'🧹','保洁','clean');});
   if(D.nextClean)calAdd(D.nextClean,'🧹','保洁预约','clean');
   D.milestones.forEach(function(m){calAdd(m.date,'🎒',m.title||'娃','kid');});
+  D.classes.forEach(function(c){
+    if(c.dow==null||c.dow<0||c.dow>6)return;
+    classOccurrences(c.dow,186).forEach(function(iso){
+      calAdd(iso,classIcon(c.type),(D.kids[c.kid]||'')+' · '+c.name,'kid');
+    });
+  });
   D.trips.forEach(function(t){calAdd(t.depart,'✈️','出发 · '+t.dest,'trip');if(t.ret)calAdd(t.ret,'✈️','返程 · '+t.dest,'trip');});
   D.declutter.forEach(function(d){calAdd(d.date,'📦',d.note?('断舍离 · '+d.note):'断舍离','declutter');});
+  D.calNotes.forEach(function(n){calAdd(n.date,n.em||'📌',n.text,'note');});
+  D.health.forEach(function(h){if(!h.done)calAdd(h.date,'🩺',h.doctor,'health');});
 }
+function drawCalNotes(){
+  $('cnList').innerHTML=D.calNotes.length?D.calNotes.slice().sort(function(a,b){return a.date<b.date?-1:(a.date>b.date?1:0);}).map(function(n){
+    return '<div class="cn-row" data-id="'+n.id+'"><span class="cn-date">'+(n.em||'📌')+' '+md(n.date)+'</span><span class="cn-txt">'+esc(n.text)+'</span><button class="cn-del">删除</button></div>';
+  }).join(''):'';
+}
+$('cnDate').value=todayISO();
+$('cnToggle').onclick=function(){
+  var f=$('cnForm'), show=f.style.display==='none';
+  f.style.display=show?'block':'none';
+  if(show)$('cnText').focus();
+};
+$('cnAdd').onclick=function(){
+  var t=$('cnText').value.trim();if(!t){toast('写点什么');return;}
+  D.calNotes.push({id:Date.now(),date:$('cnDate').value||todayISO(),text:t,em:$('cnEmoji').value.trim()||'📌'});
+  $('cnText').value='';$('cnEmoji').value='';save();drawCalendar();drawCalNotes();toast('加上了');
+  $('cnForm').style.display='none';
+};
+$('cnText').addEventListener('keydown',function(e){if(e.key==='Enter')$('cnAdd').click();});
+$('cnList').onclick=function(e){
+  if(!e.target.classList.contains('cn-del'))return;
+  var c=e.target.closest('.cn-row');if(!c)return;
+  D.calNotes=D.calNotes.filter(function(x){return x.id!=c.dataset.id;});
+  save();drawCalendar();drawCalNotes();
+};
 $('calLegend').onclick=function(e){
   var b=e.target.closest('.chip');if(!b)return;
   var was=b.classList.contains('on');
@@ -1933,7 +2113,28 @@ $('calWrap').onclick=function(e){
   toast(c.dataset.d+'　'+evs.map(function(x){return x.em+' '+x.label;}).join(' · '));
 };
 
-function drawAll(){drawTodos();drawBuys();drawWants();drawNeeds();drawCleans();drawCares();drawKid();drawMilestones();drawDiary();drawStocks();drawTrips();drawDeclutter();drawPri();drawIdeas();drawCheer();drawBkNote();drawCalendar();}
+function drawAll(){drawTodos();drawBuys();drawWants();drawNeeds();drawCleans();drawCares();drawKid();drawMilestones();drawDiary();drawStocks();drawTrips();drawDeclutter();drawPri();drawHealth();drawIdeas();drawCheer();drawBkNote();drawCalendar();drawCalNotes();}
+/* ---------- 各处"加一条"折叠开关 ---------- */
+toggleBox('todoToggle','todoBox','todoIn');
+toggleBox('bToggle','bBox','bName');
+toggleBox('wantToggle','wantBox','wantIn');
+toggleBox('needToggle','needBox','needIn');
+toggleBox('cToggle','cBox','cNote');
+toggleBox('clNextToggle','clNextBox','clNext');
+toggleBox('aToggle','aBox','aNote');
+toggleBox('nxToggle','nxBox','nxName');
+toggleBox('scToggle','scBox','scName');
+toggleBox('msToggle','msBox','msTitle');
+toggleBox('dyToggle','dyBox','dyIn');
+toggleBox('tBulkToggle','tBulkBox','tBulk');
+toggleBox('tBuyToggle','tBuyBox','tSym');
+toggleBox('trToggle','trBox','trDest');
+toggleBox('joyToggle','joyBox','joyIn');
+toggleBox('ideaToggle','ideaBox','ideaIn');
+toggleBox('dcToggle','dcBox','dcNote');
+toggleBox('priToggle','priBox','priText');
+toggleBox('hlToggle','hlBox','hlDoc');
+
 drawKidSeg();drawAll();cheerUp();
 </script>
 </body>
