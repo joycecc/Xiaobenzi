@@ -2108,9 +2108,10 @@ function drawCalendar(){
 }
 $('calWrap').onclick=function(e){
   var c=e.target.closest('.calday');if(!c||!c.dataset.d)return;
+  $('cnDate').value=c.dataset.d;
+  $('cnForm').style.display='block';
   var evs=CAL_EVENTS[c.dataset.d];
-  if(!evs||!evs.length){toast(c.dataset.d+'：这天没记什么');return;}
-  toast(c.dataset.d+'　'+evs.map(function(x){return x.em+' '+x.label;}).join(' · '));
+  if(evs&&evs.length)toast(c.dataset.d+'　'+evs.map(function(x){return x.em+' '+x.label;}).join(' · '));
 };
 
 function drawAll(){drawTodos();drawBuys();drawWants();drawNeeds();drawCleans();drawCares();drawKid();drawMilestones();drawDiary();drawStocks();drawTrips();drawDeclutter();drawPri();drawHealth();drawIdeas();drawCheer();drawBkNote();drawCalendar();drawCalNotes();}
