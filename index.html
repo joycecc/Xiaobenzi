@@ -537,7 +537,7 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
       <button class="chip" data-cat="note">📌 备忘</button>
       <button class="chip" data-cat="health">🩺 健康</button>
     </div>
-    <p class="hint" style="margin:10px 0 16px">点某天，弹窗直接加一条；往下滑看未来 6 个月。点类型筛选，再点一下恢复全部看。</p>
+    <p class="hint" style="margin:10px 0 16px">点某天看当天有什么；想加东西，去最下面点"➕"，日期会记得你刚点的那天。往下滑看未来 6 个月，点类型筛选。</p>
     <div id="calWrap"></div>
     <p class="sec">备忘</p>
     <button class="chip" id="cnToggle">➕ 加一条（可挑图标）</button>
@@ -2120,13 +2120,9 @@ function drawCalendar(){
 }
 $('calWrap').onclick=function(e){
   var c=e.target.closest('.calday');if(!c||!c.dataset.d)return;
+  $('cnDate').value=c.dataset.d;
   var evs=CAL_EVENTS[c.dataset.d];
-  if(evs&&evs.length)toast(c.dataset.d+'　'+evs.map(function(x){return x.em+' '+x.label;}).join(' · '));
-  var t=prompt(c.dataset.d+'：加点什么（不用就直接取消）','');
-  if(t!==null&&t.trim()){
-    D.calNotes.push({id:Date.now(),date:c.dataset.d,text:t.trim(),em:'📌'});
-    save();drawCalendar();drawCalNotes();toast('加上了');
-  }
+  toast(evs&&evs.length?(c.dataset.d+'　'+evs.map(function(x){return x.em+' '+x.label;}).join(' · ')):(c.dataset.d+'：这天没记什么'));
 };
 
 function drawAll(){drawTodos();drawBuys();drawWants();drawNeeds();drawCleans();drawCares();drawKid();drawMilestones();drawDiary();drawStocks();drawTrips();drawDeclutter();drawPri();drawHealth();drawIdeas();drawCheer();drawBkNote();drawCalendar();drawCalNotes();}
