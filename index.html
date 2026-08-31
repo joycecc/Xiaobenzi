@@ -192,9 +192,9 @@ textarea:focus{outline:none;border-color:var(--teal);background:#fff}
 .priority .rank::before,.priority .rank::after{content:'';position:absolute;top:-5px;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:7px solid var(--wlink-bg)}
 .priority .rank::before{left:1px;transform:rotate(-18deg)}
 .priority .rank::after{right:1px;transform:rotate(18deg)}
-.cn-row{display:flex;align-items:center;gap:9px;padding:9px 2px;border-bottom:1px solid var(--line);font-size:14px}
+.cn-row{display:flex;align-items:flex-start;gap:9px;padding:9px 2px;border-bottom:1px solid var(--line);font-size:14px}
 .cn-row:last-child{border-bottom:none}
-.cn-date{font-family:var(--n);font-size:12px;color:var(--muted);flex:none;width:38px}
+.cn-date{font-size:16px;flex:none;width:22px;text-align:center}
 .cn-txt{flex:1;color:var(--ink);min-width:0}
 .cn-del{color:var(--muted);font-size:13px;flex:none}
 .priority .txt{font-size:18px;font-weight:700;color:var(--slate);line-height:1.5;letter-spacing:-.01em;display:block}
@@ -537,13 +537,14 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
       <button class="chip" data-cat="note">📌 备忘</button>
       <button class="chip" data-cat="health">🩺 健康</button>
     </div>
-    <p class="hint" style="margin:10px 0 16px">点一个类型只看那类，再点一下恢复全部看。往下滑看未来 6 个月，点某天看当天详情。</p>
-    <button class="chip" id="cnToggle">➕ 记一件事</button>
+    <p class="hint" style="margin:10px 0 16px">点某天，弹窗直接加一条；往下滑看未来 6 个月。点类型筛选，再点一下恢复全部看。</p>
+    <div id="calWrap"></div>
+    <p class="sec">备忘</p>
+    <button class="chip" id="cnToggle">➕ 加一条（可挑图标）</button>
     <div class="card" id="cnForm" style="display:none;margin-top:10px">
       <div class="entry"><input type="text" id="cnEmoji" placeholder="📌" style="max-width:50px;flex:none"><input type="date" id="cnDate" style="max-width:130px"><input type="text" id="cnText" placeholder="比如：阿姨歇班"><button class="add" id="cnAdd" aria-label="加到日历">+</button></div>
-      <div id="cnList"></div>
     </div>
-    <div id="calWrap"></div>
+    <div id="cnList"></div>
   </section>
 
   <!-- 9 断舍离 -->
@@ -2052,9 +2053,19 @@ function buildCalEvents(){
   D.health.forEach(function(h){if(!h.done)calAdd(h.date,'🩺',h.doctor,'health');});
 }
 function drawCalNotes(){
-  $('cnList').innerHTML=D.calNotes.length?D.calNotes.slice().sort(function(a,b){return a.date<b.date?-1:(a.date>b.date?1:0);}).map(function(n){
-    return '<div class="cn-row" data-id="'+n.id+'"><span class="cn-date">'+(n.em||'📌')+' '+md(n.date)+'</span><span class="cn-txt">'+esc(n.text)+'</span><button class="cn-del">删除</button></div>';
-  }).join(''):'';
+  if(!D.calNotes.length){$('cnList').innerHTML='';return;}
+  var groups={};
+  D.calNotes.forEach(function(n){
+    var key=(n.em||'📌')+'|'+n.text;
+    if(!groups[key])groups[key]={em:n.em||'📌',text:n.text,dates:[]};
+    groups[key].dates.push(n.date);
+  });
+  var rows=Object.keys(groups).map(function(k){return {key:k,g:groups[k]};});
+  rows.sort(function(a,b){var da=a.g.dates.slice().sort().pop(),db=b.g.dates.slice().sort().pop();return da<db?1:-1;});
+  $('cnList').innerHTML=rows.map(function(r){
+    var dates=r.g.dates.slice().sort().map(md).join('、');
+    return '<div class="cn-row" data-key="'+esc(r.key)+'"><span class="cn-date">'+r.g.em+'</span><span class="cn-txt">'+esc(r.g.text)+'<span style="color:var(--muted);font-size:12px;display:block">'+dates+'</span></span><button class="cn-del">删除</button></div>';
+  }).join('');
 }
 $('cnDate').value=todayISO();
 $('cnToggle').onclick=function(){
@@ -2072,7 +2083,8 @@ $('cnText').addEventListener('keydown',function(e){if(e.key==='Enter')$('cnAdd')
 $('cnList').onclick=function(e){
   if(!e.target.classList.contains('cn-del'))return;
   var c=e.target.closest('.cn-row');if(!c)return;
-  D.calNotes=D.calNotes.filter(function(x){return x.id!=c.dataset.id;});
+  var key=c.dataset.key;
+  D.calNotes=D.calNotes.filter(function(x){return (x.em||'📌')+'|'+x.text!==key;});
   save();drawCalendar();drawCalNotes();
 };
 $('calLegend').onclick=function(e){
@@ -2108,10 +2120,13 @@ function drawCalendar(){
 }
 $('calWrap').onclick=function(e){
   var c=e.target.closest('.calday');if(!c||!c.dataset.d)return;
-  $('cnDate').value=c.dataset.d;
-  $('cnForm').style.display='block';
   var evs=CAL_EVENTS[c.dataset.d];
   if(evs&&evs.length)toast(c.dataset.d+'　'+evs.map(function(x){return x.em+' '+x.label;}).join(' · '));
+  var t=prompt(c.dataset.d+'：加点什么（不用就直接取消）','');
+  if(t!==null&&t.trim()){
+    D.calNotes.push({id:Date.now(),date:c.dataset.d,text:t.trim(),em:'📌'});
+    save();drawCalendar();drawCalNotes();toast('加上了');
+  }
 };
 
 function drawAll(){drawTodos();drawBuys();drawWants();drawNeeds();drawCleans();drawCares();drawKid();drawMilestones();drawDiary();drawStocks();drawTrips();drawDeclutter();drawPri();drawHealth();drawIdeas();drawCheer();drawBkNote();drawCalendar();drawCalNotes();}
