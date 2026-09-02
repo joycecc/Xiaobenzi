@@ -256,9 +256,9 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
   <!-- 0 清单 -->
   <section class="page" id="p0">
     <div id="bkNote"></div>
-    <button class="chip" id="todoToggle">➕ 加一条待办</button>
+    <button class="chip" id="todoToggle">➕️ 加一条待办</button>
     <div class="card" id="todoBox" style="display:none;margin-top:10px">
-      <div class="entry"><input type="text" id="todoIn" placeholder="今天要做什么…" enterkeyhint="done"><button class="add" id="todoAdd" aria-label="添加">+</button></div>
+      <div class="entry"><input type="text" autocomplete="off" id="todoIn" placeholder="今天要做什么…" enterkeyhint="done"><button class="add" id="todoAdd" aria-label="添加">+</button></div>
     </div>
     <div class="card"><ul id="todoList"></ul></div>
   </section>
@@ -286,9 +286,9 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
       </div>
       <div id="buyNote"></div>
 
-      <button class="chip" id="bToggle">➕ 记一笔</button>
+      <button class="chip" id="bToggle">➕️ 记一笔</button>
       <div class="card" id="bBox" style="display:none;margin-top:10px">
-        <div class="entry"><input type="text" id="bName" placeholder="买了什么"><input type="number" id="bAmt" placeholder="金额" inputmode="decimal" style="max-width:110px"></div>
+        <div class="entry"><input type="text" autocomplete="off" id="bName" placeholder="买了什么"><input type="number" id="bAmt" placeholder="金额" inputmode="decimal" style="max-width:110px"></div>
         <div class="entry"><input type="date" id="bDate"><input type="number" id="bOwe" placeholder="未付清金额" inputmode="decimal"></div>
         <div class="chips">
           <button class="chip plan" data-p="in">计划内</button>
@@ -312,9 +312,9 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
         <div class="cap" id="savedSub">冷静期结束后选「算了」，钱就留在这里</div>
       </div>
       <div class="note gold"><b>⏳ 想买就先放进来</b>冷静期没到不做决定。熬过去的才算「计划内」。</div>
-      <button class="chip" id="wantToggle">➕ 加一个想买的</button>
+      <button class="chip" id="wantToggle">➕️ 加一个想买的</button>
       <div class="card" id="wantBox" style="display:none;margin-top:10px">
-        <div class="entry"><input type="text" id="wantIn" placeholder="想买的东西"><input type="number" id="wantAmt" placeholder="价格" inputmode="decimal" style="max-width:110px"></div>
+        <div class="entry"><input type="text" autocomplete="off" id="wantIn" placeholder="想买的东西"><input type="number" id="wantAmt" placeholder="价格" inputmode="decimal" style="max-width:110px"></div>
         <div class="chips" id="days"></div>
         <textarea id="wantNote" placeholder="碎碎念（为什么想要，纠结什么，随便写…）" style="min-height:56px;margin-top:10px"></textarea>
         <button class="fullbtn" id="wantAdd">放进冷静期</button>
@@ -323,9 +323,9 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
       <div id="wantList"></div>
       <p class="sec">一定要买 · 还没买</p>
       <div class="note mint"><b>💡 这些不用等</b>已经想清楚了，就不用走冷静期，买了记得回来点「买了」。</div>
-      <button class="chip" id="needToggle">➕ 加一个确定要买的</button>
+      <button class="chip" id="needToggle">➕️ 加一个确定要买的</button>
       <div class="card" id="needBox" style="display:none;margin-top:10px">
-        <div class="entry"><input type="text" id="needIn" placeholder="确定要买的东西"><input type="number" id="needAmt" placeholder="价格（可不填）" inputmode="decimal" style="max-width:130px"></div>
+        <div class="entry"><input type="text" autocomplete="off" id="needIn" placeholder="确定要买的东西"><input type="number" id="needAmt" placeholder="价格（可不填）" inputmode="decimal" style="max-width:130px"></div>
         <textarea id="needNote" placeholder="碎碎念（急用 / 缺货 / 等发工资…）" style="min-height:56px"></textarea>
         <button class="fullbtn" id="needAdd" style="background:var(--mint-line)">加进清单</button>
       </div>
@@ -342,16 +342,16 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
       <div class="num" id="clYear">$0</div>
       <div class="cap" id="clCap">还没有记录</div>
     </div>
-    <button class="chip" id="cToggle">➕ 记一次上门</button>
+    <button class="chip" id="cToggle">➕️ 记一次上门</button>
     <div class="card" id="cBox" style="display:none;margin-top:10px">
       <div class="entry"><input type="date" id="cDate"><input type="number" id="cAmt" placeholder="费用" inputmode="decimal"></div>
-      <div class="entry"><input type="text" id="cNote" placeholder="阿姨 / 公司 · 备注"><button class="add" id="cAdd" aria-label="记录">+</button></div>
+      <div class="entry"><input type="text" autocomplete="off" id="cNote" placeholder="阿姨 / 公司 · 备注"><button class="add" id="cAdd" aria-label="记录">+</button></div>
     </div>
     <p class="sec">上门记录</p>
     <div class="card"><div id="clList"></div></div>
     <p class="sec">预约</p>
     <div id="clPending"></div>
-    <button class="chip" id="clNextToggle">➕ 约下一次</button>
+    <button class="chip" id="clNextToggle">➕️ 约下一次</button>
     <div class="card" id="clNextBox" style="display:none;margin-top:10px">
       <p class="h">改约 / 约下一次</p>
       <div class="entry"><input type="date" id="clNext"><input type="time" id="clNextT" style="max-width:120px"><button class="add" id="clNextSave" aria-label="保存">✓</button></div>
@@ -370,19 +370,19 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
       <p class="h">距上次</p>
       <div id="caGaps"></div>
     </div>
-    <button class="chip" id="aToggle">➕ 记一次</button>
+    <button class="chip" id="aToggle">➕️ 记一次</button>
     <div class="card" id="aBox" style="display:none;margin-top:10px">
       <div class="chips" id="caTypes"></div>
       <div class="entry" style="margin-top:11px"><input type="date" id="aDate"><input type="number" id="aAmt" placeholder="费用" inputmode="decimal"></div>
-      <div class="entry"><input type="text" id="aNote" placeholder="医生 / 项目 / 感受"><button class="add" id="aAdd" aria-label="记录">+</button></div>
+      <div class="entry"><input type="text" autocomplete="off" id="aNote" placeholder="医生 / 项目 / 感受"><button class="add" id="aAdd" aria-label="记录">+</button></div>
     </div>
     <p class="sec">记录</p>
     <div class="card"><div id="caList"></div></div>
     <p class="sec">预约</p>
-    <button class="chip" id="nxToggle">➕ 约下次</button>
+    <button class="chip" id="nxToggle">➕️ 约下次</button>
     <div class="card" id="nxBox" style="display:none;margin-top:10px">
       <p class="h">下次预约</p>
-      <div class="entry"><input type="text" id="nxName" placeholder="项目（如 针灸 / Botox）"></div>
+      <div class="entry"><input type="text" autocomplete="off" id="nxName" placeholder="项目（如 针灸 / Botox）"></div>
       <div class="entry"><input type="date" id="nxDate"><input type="time" id="nxTime" style="max-width:120px"></div>
       <button class="fullbtn" id="nxCal" style="background:var(--chip);color:var(--teal)">📅 加到 Google 日历</button>
     </div>
@@ -397,20 +397,20 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
       <div class="bar-row" style="margin:0 0 12px"><span class="lb" style="width:auto;color:var(--ink);font-weight:600" id="clsYear">今年上课 0 次</span><span class="am" id="clsAll"></span></div>
       <div id="scList" style="margin-top:6px"></div>
     </div>
-    <button class="chip" id="scToggle">➕ 加一门课</button>
+    <button class="chip" id="scToggle">➕️ 加一门课</button>
     <div class="card" id="scBox" style="display:none;margin-top:10px">
-      <div class="entry"><input type="text" id="scName" placeholder="课程（如 架子鼓）"></div>
+      <div class="entry"><input type="text" autocomplete="off" id="scName" placeholder="课程（如 架子鼓）"></div>
       <div class="chips" id="scTypes" style="margin-bottom:9px"></div>
-      <div class="entry"><input type="text" id="scWho" placeholder="老师 / 机构"></div>
+      <div class="entry"><input type="text" autocomplete="off" id="scWho" placeholder="老师 / 机构"></div>
       <div class="chips" id="scDows"></div>
       <div class="entry" style="margin-top:10px"><input type="time" id="scTime"><input type="number" id="scMins" placeholder="分钟" value="60" inputmode="numeric" style="max-width:90px"><button class="add" id="scAdd" aria-label="添加">+</button></div>
     </div>
 
     <p class="sec">里程碑</p>
     <div id="msList"></div>
-    <button class="chip" id="msToggle">➕ 记一个里程碑</button>
+    <button class="chip" id="msToggle">➕️ 记一个里程碑</button>
     <div class="card" id="msBox" style="display:none;margin-top:10px">
-      <div class="entry"><input type="text" id="msTitle" placeholder="里程碑（如 第一次会走路）"></div>
+      <div class="entry"><input type="text" autocomplete="off" id="msTitle" placeholder="里程碑（如 第一次会走路）"></div>
       <div class="entry"><input type="date" id="msDate"></div>
       <textarea id="msNote" placeholder="想记的细节…" style="min-height:60px"></textarea>
       <div class="entry" style="margin-top:2px"><button class="chip" id="msPh">📷 加张照片</button></div>
@@ -421,7 +421,7 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
 
     <p class="sec">碎碎念</p>
     <div id="dyList"></div>
-    <button class="chip" id="dyToggle">➕ 写一条</button>
+    <button class="chip" id="dyToggle">➕️ 写一条</button>
     <div class="card" id="dyBox" style="display:none;margin-top:10px">
       <textarea id="dyIn" placeholder="随便写点什么…"></textarea>
       <button class="fullbtn" id="dyAdd" style="background:var(--mint-line)">收进来</button>
@@ -443,7 +443,7 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
     <div id="stNote"></div>
     <p class="sec">持仓</p>
     <div class="card"><div id="posList"></div></div>
-    <button class="chip" id="tBulkToggle">➕ 批量导入</button>
+    <button class="chip" id="tBulkToggle">➕️ 批量导入</button>
     <div class="card" id="tBulkBox" style="display:none;margin-top:10px">
       <p class="h">批量导入（截图抄的都行）</p>
       <p class="hint" style="margin:0 0 10px">这里读不了图，是我在聊天里帮你看：把截图直接发在这次对话里（跟发照片给朋友一样），我读出代码、股数、成本价，照下面这个格式发回来，你贴进框里点导入。</p>
@@ -453,10 +453,10 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
       <input type="file" id="tShotFile" accept="image/*" style="display:none">
       <div id="tShots" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div>
     </div>
-    <button class="chip" id="tBuyToggle">➕ 记一笔买入</button>
+    <button class="chip" id="tBuyToggle">➕️ 记一笔买入</button>
     <div class="card" id="tBuyBox" style="display:none;margin-top:10px">
       <p class="h">买入</p>
-      <div class="entry"><input type="text" id="tSym" placeholder="代码 如 AAPL" autocapitalize="characters"><input type="number" id="tQty" placeholder="股数" inputmode="decimal" style="max-width:100px"></div>
+      <div class="entry"><input type="text" autocomplete="off" id="tSym" placeholder="代码 如 AAPL" autocapitalize="characters"><input type="number" id="tQty" placeholder="股数" inputmode="decimal" style="max-width:100px"></div>
       <div class="entry"><input type="number" id="tPrice" placeholder="买入价" inputmode="decimal"><input type="date" id="tDate"></div>
       <button class="fullbtn" id="tBuy">记一笔买入</button>
     </div>
@@ -478,10 +478,10 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
     <div class="card"><div id="tripList"></div></div>
     <p class="sec">预约</p>
     <div id="tripPending"></div>
-    <button class="chip" id="trToggle">➕ 加一趟行程</button>
+    <button class="chip" id="trToggle">➕️ 加一趟行程</button>
     <div class="card" id="trBox" style="display:none;margin-top:10px">
       <p class="h">加一趟行程</p>
-      <div class="entry"><input type="text" id="trDest" placeholder="目的地 如 上海"><input type="text" id="trFrom" placeholder="出发地" style="max-width:110px"></div>
+      <div class="entry"><input type="text" autocomplete="off" id="trDest" placeholder="目的地 如 上海"><input type="text" autocomplete="off" id="trFrom" placeholder="出发地" style="max-width:110px"></div>
       <div class="entry"><input type="date" id="trDepart"><input type="date" id="trReturn"></div>
       <div class="entry"><input type="date" id="trCheckBy"><button class="add" id="trAdd" aria-label="添加">+</button></div>
       <p class="hint" style="margin:2px 0 0">出发日 / 返程日 / 查票提醒日（最后一个不填也行，填了会提醒你去看票价）</p>
@@ -503,9 +503,9 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
         <div class="stat"><b id="sOut">0</b><span>今年计划外</span></div>
       </div>
       <p class="sec">今天的小确幸</p>
-      <button class="chip" id="joyToggle">➕ 记一件</button>
+      <button class="chip" id="joyToggle">➕️ 记一件</button>
       <div class="card" id="joyBox" style="display:none;margin-top:10px">
-        <div class="entry"><input type="text" id="joyIn" placeholder="一件让你嘴角上扬的小事…"><button class="add ph" id="joyPh" aria-label="加照片">📷</button><button class="add" id="joyAdd" aria-label="记下">+</button></div>
+        <div class="entry"><input type="text" autocomplete="off" id="joyIn" placeholder="一件让你嘴角上扬的小事…"><button class="add ph" id="joyPh" aria-label="加照片">📷</button><button class="add" id="joyAdd" aria-label="记下">+</button></div>
         <div class="prev" id="jPrev"><img id="jPrevImg" alt=""><button id="jPrevX">去掉</button></div>
         <input type="file" id="jFile" accept="image/*" style="display:none">
       </div>
@@ -518,7 +518,7 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
       </div>
     </div>
     <div class="sub" id="s51">
-      <button class="chip" id="ideaToggle">➕ 记一个念头</button>
+      <button class="chip" id="ideaToggle">➕️ 记一个念头</button>
       <div class="card" id="ideaBox" style="display:none;margin-top:10px"><textarea id="ideaIn" placeholder="一个念头、一句话、一个想试试的事…"></textarea><button class="fullbtn" id="ideaAdd">收进来</button></div>
       <div id="ideaList"></div>
     </div>
@@ -537,9 +537,9 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
     </div>
     <p class="hint" style="margin:10px 0 16px">点某天看当天有什么；往下滑看未来 6 个月；点类型筛选。</p>
     <div id="cnList"></div>
-    <button class="chip" id="cnToggle">➕ 加一条（可挑图标）</button>
+    <button class="chip" id="cnToggle">➕️ 加一条（可挑图标）</button>
     <div class="card" id="cnForm" style="display:none;margin-top:10px">
-      <div class="entry"><input type="text" id="cnEmoji" placeholder="📌" style="max-width:50px;flex:none"><input type="date" id="cnDate" style="max-width:130px"><input type="text" id="cnText" placeholder="比如：阿姨歇班"><button class="add" id="cnAdd" aria-label="加到日历">+</button></div>
+      <div class="entry"><input type="text" autocomplete="off" id="cnEmoji" placeholder="📌" style="max-width:50px;flex:none"><input type="date" id="cnDate" style="max-width:130px"><input type="text" autocomplete="off" id="cnText" placeholder="比如：阿姨歇班"><button class="add" id="cnAdd" aria-label="加到日历">+</button></div>
     </div>
     <div id="calWrap" style="margin-top:16px"></div>
   </section>
@@ -551,7 +551,7 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
       <div class="num" id="dcYear">0</div>
       <div class="cap" id="dcCap">还没有记录</div>
     </div>
-    <button class="chip" id="dcToggle">➕ 记一件</button>
+    <button class="chip" id="dcToggle">➕️ 记一件</button>
     <div class="card" id="dcBox" style="display:none;margin-top:10px">
       <div class="entry"><input type="date" id="dcDate"></div>
       <textarea id="dcNote" placeholder="断舍离了什么，为什么，什么感受…" style="min-height:70px"></textarea>
@@ -572,9 +572,9 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
       <p class="pri-meta" id="priMeta"></p>
     </div>
     <div id="priList"></div>
-    <button class="chip" id="priToggle">➕ 加一条</button>
+    <button class="chip" id="priToggle">➕️ 加一条</button>
     <div class="pri-add" id="priBox" style="display:none">
-      <input type="text" id="priText" placeholder="再想到一条，写下来…想连到别的条目就用「[[ ]]」括起来">
+      <input type="text" autocomplete="off" id="priText" placeholder="再想到一条，写下来…想连到别的条目就用「[[ ]]」括起来">
       <button id="priAdd" aria-label="添加">加一条 →</button>
     </div>
   </section>
@@ -588,9 +588,9 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
     </div>
     <p class="sec">预约</p>
     <div id="hlPending"></div>
-    <button class="chip" id="hlToggle">➕ 加一个预约</button>
+    <button class="chip" id="hlToggle">➕️ 加一个预约</button>
     <div class="card" id="hlBox" style="display:none;margin-top:10px">
-      <div class="entry"><input type="text" id="hlDoc" placeholder="医生 / 科室"></div>
+      <div class="entry"><input type="text" autocomplete="off" id="hlDoc" placeholder="医生 / 科室"></div>
       <div class="entry"><input type="date" id="hlDate"><input type="time" id="hlTime" style="max-width:120px"></div>
       <textarea id="hlPrep" placeholder="想跟医生聊什么，先写下来，到时候不会忘…" style="min-height:70px"></textarea>
       <button class="fullbtn" id="hlAdd" style="margin-top:10px">记下预约</button>
@@ -626,7 +626,7 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
       <img id="iconPreview" alt="" style="width:52px;height:52px;border-radius:14px;border:1px solid var(--line);flex:none">
       <div style="flex:1;min-width:0">
-        <div class="entry" style="margin-bottom:8px"><input type="text" id="fIconEmoji" placeholder="打个 emoji，比如 📓🌸🍃"><button class="add" id="iconEmojiGo" aria-label="用这个">✓</button></div>
+        <div class="entry" style="margin-bottom:8px"><input type="text" autocomplete="off" id="fIconEmoji" placeholder="打个 emoji，比如 📓🌸🍃"><button class="add" id="iconEmojiGo" aria-label="用这个">✓</button></div>
         <div class="chips"><button class="chip" id="iconPhotoBtn">📷 用张照片</button><button class="chip" id="iconResetBtn">恢复默认</button></div>
       </div>
     </div>
@@ -635,15 +635,15 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;background:va
     <h3 style="margin-top:22px">课程/活动图标</h3>
     <p class="hint">给孩子的课程和活动配个图标，添加课表的时候可以选。</p>
     <div id="ctList" style="margin-bottom:8px"></div>
-    <div class="entry"><input type="text" id="ctEmoji" placeholder="emoji" style="max-width:56px;flex:none"><input type="text" id="ctName" placeholder="类型名（如 游泳）"><button class="add" id="ctAdd" aria-label="添加">+</button></div>
+    <div class="entry"><input type="text" autocomplete="off" id="ctEmoji" placeholder="emoji" style="max-width:56px;flex:none"><input type="text" autocomplete="off" id="ctName" placeholder="类型名（如 游泳）"><button class="add" id="ctAdd" aria-label="添加">+</button></div>
 
     <h3 style="margin-top:22px">设置</h3>
     <div class="fld"><label>今年「计划外」上限（$）</label><input type="number" id="fCap" inputmode="decimal"></div>
-    <div class="fld"><label>老大的名字</label><input type="text" id="fK1"></div>
-    <div class="fld"><label>老二的名字</label><input type="text" id="fK2"></div>
-    <div class="fld"><label>换算参照 · 名称</label><input type="text" id="fRefName" placeholder="例：个月课后班"></div>
+    <div class="fld"><label>老大的名字</label><input type="text" autocomplete="off" id="fK1"></div>
+    <div class="fld"><label>老二的名字</label><input type="text" autocomplete="off" id="fK2"></div>
+    <div class="fld"><label>换算参照 · 名称</label><input type="text" autocomplete="off" id="fRefName" placeholder="例：个月课后班"></div>
     <div class="fld"><label>换算参照 · 单价（$）</label><input type="number" id="fRefAmt" inputmode="decimal"></div>
-    <div class="fld"><label>股票涨跌颜色</label><input type="text" id="fUpCol" placeholder="绿涨红跌 或 红涨绿跌"></div>
+    <div class="fld"><label>股票涨跌颜色</label><input type="text" autocomplete="off" id="fUpCol" placeholder="绿涨红跌 或 红涨绿跌"></div>
     <div class="fld"><label>我的邮箱（备份发这里）</label><input type="email" id="fMyMail" placeholder="you@example.com" autocapitalize="off"></div>
     <div class="fld"><label>Journey 专属邮箱（邮件写日记用）</label><input type="email" id="fJmail" placeholder="xxxx@journey.cloud" autocapitalize="off"></div>
     <div class="row2"><button class="fill" id="saveSet">保存设置</button></div>
@@ -2075,7 +2075,7 @@ $('cnDate').value=todayISO();
 $('cnToggle').onclick=function(){
   var f=$('cnForm'), show=f.style.display==='none';
   f.style.display=show?'block':'none';
-  if(show)$('cnText').focus();
+  if(show){f.scrollIntoView({behavior:'smooth',block:'center'});$('cnText').focus();}
 };
 $('cnAdd').onclick=function(){
   var t=$('cnText').value.trim();if(!t){toast('写点什么');return;}
@@ -2129,7 +2129,8 @@ $('calWrap').onclick=function(e){
   var c=e.target.closest('.calday');if(!c||!c.dataset.d)return;
   $('cnDate').value=c.dataset.d;
   var evs=CAL_EVENTS[c.dataset.d];
-  toast(evs&&evs.length?(c.dataset.d+'　'+evs.map(function(x){return x.em+' '+x.label;}).join(' · ')):(c.dataset.d+'：这天没记什么'));
+  var info=evs&&evs.length?(c.dataset.d+'　'+evs.map(function(x){return x.em+' '+x.label;}).join(' · ')):(c.dataset.d+'：这天还没记什么');
+  toast(info+'　·　日期选好了，点上面「➕️」加一条');
 };
 
 function drawAll(){drawTodos();drawBuys();drawWants();drawNeeds();drawCleans();drawCares();drawKid();drawMilestones();drawDiary();drawStocks();drawTrips();drawDeclutter();drawPri();drawHealth();drawIdeas();drawCheer();drawBkNote();drawCalendar();drawCalNotes();}
